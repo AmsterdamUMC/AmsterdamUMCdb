@@ -1,8 +1,8 @@
 <img src="../img/logo_amds.png" alt="Logo" height="128px"/>
 
 # AmsterdamUMCdb - Freely Accessible ICU Database
-version 1.0 November 2019  
-Copyright &copy; 2003-2019 Amsterdam UMC - Amsterdam Medical Data Science
+version 1.0.1 January 2020  
+Copyright &copy; 2003-2020 Amsterdam UMC - Amsterdam Medical Data Science
 
 # Table definitions in Jupyter notebooks
 This folder contains Jupyter notebooks for each table with sample Python code for common metrics and examples for data exploration 
