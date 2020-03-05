@@ -4,13 +4,13 @@
 AmsterdamUMCdb is the first freely accessible European intensive care database. It is endorsed by the European Society of Intensive Care Medicine (ESICM) and its Data Science Section. It contains de-identified health data related to tens of thousands of intensive care unit admissions, including demographics, vital signs, laboratory tests and medications.
 
 # Version
-The current version of AmsterdamUMCdb is 1.0.1, released in January 2020. This version contains data related to 23,172 intensive care unit and high dependency unit admissions of adult patients from 2003-2016. The first version of AmsterdamUMCdb (1.0) was released in November 2019.
+The current version of AmsterdamUMCdb is 1.0.2, released in March 2020. This version contains data related to 23,106 intensive care unit and high dependency unit admissions of adult patients from 2003-2016. The first version of AmsterdamUMCdb (1.0) was released in November 2019.
 
 # Requesting Access
 The database, although de-identified, still contains detailed information regarding the clinical care of patients, so must be treated with appropriate care and respect and cannot be shared without permission. To request access, go to the [Amsterdam Medical Data Science](https://amsterdammedicaldatascience.nl/) website.
 
 # Facts and Figures
-The current database contains data from the clinical patient data management system of the department of Intensive Care, a mixed medical-surgical ICU, from Amsterdam University Medical Center. The clinical data contains 23,172 admissions from 20,127 patients admitted from 2003 to 2016 with a total of almost 1.0 billion clinical observations consisting of vitals, clinical scoring systems, device data and lab results data and nearly 5.0 million medication records.
+The current database contains data from the clinical patient data management system of the department of Intensive Care, a mixed medical-surgical ICU, from Amsterdam University Medical Center. The clinical data contains 23,106 admissions of 20,109 patients admitted from 2003 to 2016 with a total of almost 1.0 billion clinical observations consisting of vitals, clinical scoring systems, device data and lab results data and nearly 5.0 million medication records.
 
 <img src="img/plot_admissions_year.png" alt="Admissions per year category" height="512px"/>
 <img src="img/plot_admissions_age.png" alt="Admission per age category" height="512px"/>
