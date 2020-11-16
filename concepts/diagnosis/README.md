@@ -1,4 +1,4 @@
-<img src="../img/logo_amds.png" alt="Logo" height="128px"/>
+<img src="../../img/logo_amds.png" alt="Logo" height="128px"/>
 
 # AmsterdamUMCdb - Freely Accessible ICU Database
 version 1.0.2 March 2020  
