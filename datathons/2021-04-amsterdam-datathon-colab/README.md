@@ -19,4 +19,4 @@ If you don't have any experience in using Jupyter notebooks and/or Python, it is
 
 
 ## Running Colab
-Open Colab with the **getting-started** notebook from the official AmsterdamUMCdb GitHub repository: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AmsterdamUMC/AmsterdamUMCdb/blob/master/datathons/2021-04-amsterdam-datathon-colab/getting-started.ipynb)
+Open Colab with the **getting-started** notebook from the official AmsterdamUMCdb GitHub repository: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AmsterdamUMC/AmsterdamUMCdb/blob/master/datathons/2021-04-amsterdam-datathon-colab/getting_started.ipynb)
