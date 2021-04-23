@@ -47,3 +47,11 @@ While the indices are being created, the postgreSQL should be available for quer
 using conda:
 
 > conda install -c plotly plotly
+
+The `amsterdamumcdb` package contains some utility functions used in the Notebooks. The package can be installed from the Python Package Index respository (PiPy) by running:
+
+> pip install amsterdamumcdb
+
+or if you intend to actively develop the package use (replace `~/AmsterdamUMCdb` with the actual location of the cloned repository):
+
+> pip install -e ~/AmsterdamUMCdb/
