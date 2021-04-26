@@ -17,6 +17,11 @@ Ensure you have a working Google account and verify that the e-mail address used
 
 If you don't have any experience in using Jupyter notebooks and/or Python, it is recommended to familiarize yourself with the [basics](https://colab.research.google.com/notebooks/intro.ipynb).
 
+<<<<<<< HEAD
+## Running Colab
+Open Colab with the **getting-started** notebook from the official AmsterdamUMCdb GitHub repository: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AmsterdamUMC/AmsterdamUMCdb/blob/master/datathons/2021-04-amsterdam-datathon-colab/getting_started.ipynb)
+=======
 
 ## Running Colab
 Open Colab with the **getting-started** notebook from the official AmsterdamUMCdb GitHub repository: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/AmsterdamUMC/AmsterdamUMCdb/blob/master/datathons/2021-04-amsterdam-datathon-colab/getting_started.ipynb)
+>>>>>>> cfb1b48b246a378f2c2c0e4d5302e70cc3c1b4f4
