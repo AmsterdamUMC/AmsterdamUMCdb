@@ -2778,7 +2778,7 @@
 9559,Anion-Gap (bloed),,Anion-Gap (bloed),372,LAB ASTRUPS,,,,1,,,97,mmol/l,,,numericitems,464208,464208
 9560,Ca++ Astrup,,Ca++ Astrup,372,LAB ASTRUPS,,,,1,,,97,mmol/l,"1,13","1,32",numericitems,16774,16774
 9561,CA++(7.4) Astrup,,CA++(7.4) Astrup,372,LAB ASTRUPS,,,,1,,,97,mmol/l,,,numericitems,13584,13584
-9580,Laktaat Astrup,,Laktaat Astrup,372,LAB ASTRUPS,,,,1,,,97,mmol/l,,,numericitems,917,917
+9580,Laktaat Astrup,lactate (blood gas),Laktaat Astrup,372,LAB ASTRUPS,,,,1,,,97,mmol/l,,,numericitems,917,917
 6800,ALAT,,ALAT,371,LAB CHEMIE,,,,1,,,186,IE/l,0,28,numericitems,2185,2185
 6801,Albumine chemisch,,Alb. chemisch,371,LAB CHEMIE,,,,1,,,62,g/l,20,40,numericitems,3064,3064
 6803,Alk. Fosfatase,,Alk.Fosfatase,371,LAB CHEMIE,,,,1,,,186,IE/l,0,90,numericitems,1971,1971
@@ -2799,7 +2799,7 @@
 6833,Glucose Bloed,,Glucose,371,LAB CHEMIE,,,,1,,,97,mmol/l,3,9,numericitems,7892,7892
 6835,Kalium,serum potassium,K,371,LAB CHEMIE,,,,1,,,97,mmol/l,"3,6","5,2",numericitems,8612,8612
 6836,Kreatinine,serum creatinine,Kreat,371,LAB CHEMIE,,,,1,,,56,µmol,30,100,numericitems,6481,6481
-6837,Laktaat,,Laktaat,371,LAB CHEMIE,,,,1,,,97,mmol/l,"0,6","2,4",numericitems,1476,1476
+6837,Laktaat,lactate,Laktaat,371,LAB CHEMIE,,,,1,,,97,mmol/l,"0,6","2,4",numericitems,1476,1476
 6838,LDH,,LDH,371,LAB CHEMIE,,,,1,,,186,IE/l,0,275,numericitems,1522,1522
 6839,Magnesium,,Mg,371,LAB CHEMIE,,,,1,,,97,mmol/l,"0,75","1,02",numericitems,4633,4633
 6840,Natrium,serum sodium,Na,371,LAB CHEMIE,,,,1,,,97,mmol/l,137,147,numericitems,8602,8602
@@ -2924,7 +2924,7 @@
 10038,Lood (bloed),,Lood (bloed),490,LAB-Chem-bloed,,,,1,,,41,µg/l,,,numericitems,2,2
 10051,Serum Totaal Eiwit (bloed),,Serum Totaal Eiwit (bloed),490,LAB-Chem-bloed,,,,1,,,62,g/l,,,numericitems,257,257
 10052,Ammoniak (bloed),,Ammoniak (bloed),490,LAB-Chem-bloed,,,,1,,,99,µmol/l,0,50,numericitems,1704,1704
-10053,Lactaat (bloed),,Lactaat (bloed),490,LAB-Chem-bloed,,,,1,,,97,mmol/l,0,"2,2",numericitems,182155,182155
+10053,Lactaat (bloed),lactate,Lactaat (bloed),490,LAB-Chem-bloed,,,,1,,,97,mmol/l,0,"2,2",numericitems,182155,182155
 10054,Fe (bloed),,Fe (bloed),490,LAB-Chem-bloed,,,,1,,,99,µmol/l,10,32,numericitems,1025,1025
 10055,TYBC (bloed),,TYBC (bloed),490,LAB-Chem-bloed,,,,1,,,99,µmol/l,45,90,numericitems,977,977
 10056,Hdl-Chol (bloed),,Hdl-Chol (bloed),490,LAB-Chem-bloed,,,,1,,,97,mmol/l,,,numericitems,1081,1081
