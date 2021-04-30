@@ -24,7 +24,7 @@ Please follow the instructions in the getting_started notebook carefully: [![Ope
 
 ## ERROR: 403 Access Denied: Table `table_name`: User does not have permission to query table `table_name`
 
-Most likely you are not using the Google account we have on file for the datathon. Authenticate with the Google account used during registration for the datathon. In addition, access will only be available during the datathon, unless you have applied for access during the regular procedure on [Amsterdam Medical Data Science](https://amsterdammedicaldatascience.nl/).
+Most likely you are not using the Google account we have on file for the datathon. Authenticate with the Google account used during registration for the datathon. Verify that the e-mail address used when registering for the Datathon has been associated with this account. If you already have a Google account, you can add secondary e-mail adresses [here](https://myaccount.google.com/alternateemail), or alternatively create another Google account using the e-mail adress used during registration of the Datathon. In addition, access will only be available during the datathon, unless you have applied for access during the regular procedure on [Amsterdam Medical Data Science](https://amsterdammedicaldatascience.nl/).
 
 ## Error: The project `your_id` has not enabled BigQuery
 
