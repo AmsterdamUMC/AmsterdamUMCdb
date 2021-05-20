@@ -32,3 +32,44 @@ The table and field definitions are available from the [AmsterdamUMCdb wiki](htt
 |[numericitems](https://github.com/AmsterdamUMC/AmsterdamUMCdb/wiki/numericitems)| numerical measurements and observations, including vital parameters, data from medical devices, lab results, outputs from drains and foley-catheters, scores etc.|
 |[procedureorderitems](https://github.com/AmsterdamUMC/AmsterdamUMCdb/wiki/procedureorderitems)|procedures and tasks, such as performing a chest X-ray, drawing blood and daily ICU nursing care and scoring|
 |[processitems](https://github.com/AmsterdamUMC/AmsterdamUMCdb/wiki/processitems)|catheters, drains, tubes, and continous non-medication processes (e.g. renal replacement therapy, hypothermia induction, etc.)|
+
+# amsterdamumcdb Python package
+The `amsterdamumcdb` Python package contains common functions for working with the database.
+
+## Available functions
+***
+### *amsterdamumcdb*.**get_dictionary()**:
+Gets a dictionary of all items in Amsterdam UMCdb, with (work in progress) translated 
+medical concepts.
+
++ Returns:
+    + dataframe containing dictionary
+
+***
+### *amsterdamumcdb*.**get_fluidbalance(admissionid, from_date, to_date, con)**:
+
+Calculate the fluid balance (i.e. fluid input - fluid output) for a specific time interval.
+Typically this will be used to calculate daily fluid balances.
+
++ Arguments:
+    + admissionid -- the admissionid of ICU admission 
+    + from_date -- the start of the interval, expressed as the number of milliseconds from start of this ICU admission
+    + to_date -- the end of the interval, expressed as the number of milliseconds from start of this ICU admission 
+    + con -- psycopg2 connection or pandas-gbq Google BigQuery config
+
+### *amsterdamumcdb*.**outliers_histogram(data, z_treshold=4.0, lower=None, upper=None, bins='auto'):
+
+Return a pyplot histogram, where the upper and/or lower outliers are
+    binned together for a more even distribution plot.
+
++ Arguments:
+    + data -- dataframe to calculate the median absolute deviatan for 
+    + z_treshold -- number of standard deviations from the median to determine outliers
+    + lower -- lower threshold for binning lower outliers together
+    + upper -- upper threshold for binning higer outliers together
+    
+## Changelog
+### version 0.1.1
++ Fixes Google BigQuery `Project must be a string` error.
+### version 0.1.0
++ initial release for ESICM Datathon 20201
