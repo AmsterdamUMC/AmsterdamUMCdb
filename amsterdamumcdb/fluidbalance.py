@@ -27,7 +27,7 @@ def get_fluidbalance(admissionid, from_date, to_date, con) -> pd.DataFrame:
     sql = file.read().format(admissionid=admissionid, msfromdate=from_date, mstodate=to_date)
 
     if type(con) is dict:  # BigQuery config
-        result = pd.read_gbq(sql, con)
+        result = pd.read_gbq(sql, configuration=con)
     else:
         result = pd.read_sql(sql, con)
 
