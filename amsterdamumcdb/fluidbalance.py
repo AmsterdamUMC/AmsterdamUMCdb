@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 
 
@@ -13,9 +14,20 @@ def get_fluidbalance(admissionid, from_date, to_date, con) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
 
-    assert str(admissionid).isnumeric(), "admissionid is not a number: %r" % admissionid
-    assert str(from_date).isnumeric(), "from_date is not a number: %r" % from_date
-    assert str(to_date).isnumeric(), "to_date is not a number: %r" % to_date
+    try:
+        admissionid = np.int64(admissionid)
+    except ValueError:
+        raise Exception("admissionid is not a number: %r" % admissionid)
+
+    try:
+        from_date = np.int64(from_date)
+    except ValueError:
+        raise Exception("from_date is not a number: %r" % from_date)
+
+    try:
+        to_date = np.int64(to_date)
+    except ValueError:
+        raise Exception("to_date is not a number: %r" % to_date)
 
     # gets the SQL source file
     dirname = os.path.dirname(os.path.abspath(__file__))

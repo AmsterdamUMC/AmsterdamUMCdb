@@ -69,6 +69,8 @@ Return a pyplot histogram, where the upper and/or lower outliers are
     + upper -- upper threshold for binning higer outliers together
     
 ## Changelog
+### versions 0.1.2
++ Allows negative dates in `get_fluidbalance()` 
 ### version 0.1.1
 + Fixes Google BigQuery `Project must be a string` error.
 ### version 0.1.0
