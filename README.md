@@ -37,17 +37,14 @@ The table and field definitions are available from the [AmsterdamUMCdb wiki](htt
 The `amsterdamumcdb` Python package contains common functions for working with the database.
 
 ## Available functions
-***
-### *amsterdamumcdb*.**get_dictionary()**:
+### *amsterdamumcdb*.get_dictionary():
 Gets a dictionary of all items in Amsterdam UMCdb, with (work in progress) translated 
 medical concepts.
 
 + Returns:
     + dataframe containing dictionary
 
-***
-### *amsterdamumcdb*.**get_fluidbalance(admissionid, from_date, to_date, con)**:
-
+### *amsterdamumcdb*.get_fluidbalance(admissionid, from_date, to_date, con):
 Calculate the fluid balance (i.e. fluid input - fluid output) for a specific time interval.
 Typically this will be used to calculate daily fluid balances.
 
@@ -57,19 +54,25 @@ Typically this will be used to calculate daily fluid balances.
     + to_date -- the end of the interval, expressed as the number of milliseconds from start of this ICU admission 
     + con -- psycopg2 connection or pandas-gbq Google BigQuery config
 
-### *amsterdamumcdb*.**outliers_histogram(data, z_treshold=4.0, lower=None, upper=None, bins='auto'):
-
+### *amsterdamumcdb*.outliers_histogram(data, z_threshold=4.0, lower=None, upper=None, bins=None, binwidth=None, maxbins=None):
 Return a pyplot histogram, where the upper and/or lower outliers are
-    binned together for a more even distribution plot.
+binned together for a more even distribution plot. By default, the histogram will be created with bins that are on
+boundaries aligned with the pyplot axis ticks.
 
 + Arguments:
-    + data -- dataframe to calculate the median absolute deviatan for 
-    + z_treshold -- number of standard deviations from the median to determine outliers
-    + lower -- lower threshold for binning lower outliers together
-    + upper -- upper threshold for binning higer outliers together
+  + data -- dataframe to create the histogram for.
+  + z_threshold (Optional) -- number of standard deviations from the median to determine outliers
+  + lower (Optional) -- lower threshold for binning lower outliers together
+  + upper (Optional) -- upper threshold for binning higher outliers together
+  + bins (Optional) -- int or sequence or str, allows specifying the number of bins, the actual bins or a binning strategy
+            (see: https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html)
+  + binwidth (Optional) -- forces a specified size of the equally sized bins between the lower and upper threshold
+  + maxbins -- the maximum number of equally sized bins to create
     
 ## Changelog
-### versions 0.1.2
+### version 0.1.3
++ Improves binning in `outliers_histogram()`
+### version 0.1.2
 + Allows negative dates in `get_fluidbalance()` 
 ### version 0.1.1
 + Fixes Google BigQuery `Project must be a string` error.
