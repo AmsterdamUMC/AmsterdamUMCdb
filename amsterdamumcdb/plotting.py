@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 
-
-def outliers_histogram(data, z_threshold=4.0, lower=None, upper=None, bins=None, binwidth=None, maxbins=None):
+def outliers_histogram(data, z_threshold=4.0, lower=None, upper=None, bins=None, binwidth=None, maxbins=None, **kwargs):
     """Return a pyplot histogram, where the upper and/or lower outliers are
     binned together for a more even distribution plot. By default, the histogram will be created with bins that are on
     boundaries aligned with the pyplot axis ticks.
@@ -39,12 +38,13 @@ def outliers_histogram(data, z_threshold=4.0, lower=None, upper=None, bins=None,
         if not binwidth:
             # if binwidth not defined, determine the bindwith based on
             # the ticks pyplot will generate
-            binwidth = pretty_binwidth(lower, upper, maxbins)
-            bins = np.arange(round_base(lower, base=binwidth), round_base(upper, base=binwidth) + binwidth, binwidth)
+            count = len(data)
+            binwidth = pretty_binwidth(lower, upper, len(data), maxbins)
+            bins = np.arange(round_base(lower, base=binwidth), round_base(upper + binwidth, base=binwidth), binwidth)
         else:
-            bins = np.arange(round_base(lower, base=binwidth), round_base(upper, base=binwidth) + binwidth, binwidth)
+            bins = np.arange(round_base(lower, base=binwidth), round_base(upper + binwidth, base=binwidth), binwidth)
 
-    n, bins, patches = plt.hist(data, range=(lower, upper), bins=bins)
+    n, bins, patches = plt.hist(data, range=(lower, upper), bins=bins, **kwargs)
     cm = plt.cm.get_cmap('magma')
 
     # To normalize the values
@@ -98,10 +98,10 @@ def z_range(data, z_thresh=4):
 
 def round_base(x, base=.05):
     """"rounds the value up to the nearest base"""
-    return round(base * round(float(x) / base))
+    return base * round(float(x) / base)
 
 
-def pretty_binwidth(lower, upper, maxbins=None):
+def pretty_binwidth(lower, upper, count, maxbins=None):
     """uses the matplotlib.ticker.AutoLocator (for generating the ticks in the
     plot), to determine the bins to use. By default, ticks will be placed on
     positions that are multiples of the following sequence: [1, 2, 2.5, 5, 10].
@@ -111,6 +111,8 @@ def pretty_binwidth(lower, upper, maxbins=None):
     Arguments:
         lower -- the lower boundary of the dataset
         upper -- the upper boundary of the dataset
+        count -- number of items in the dataset
+        maxbins -- the maximum number of bins to create
     """
     locator = ticker.AutoLocator()
     ticks = locator.tick_values(vmin=lower, vmax=upper)
@@ -121,8 +123,19 @@ def pretty_binwidth(lower, upper, maxbins=None):
         if bins_per_tick == 0:
             bins_per_tick = 1
     else:
-        # default: allow five bins between every tick
-        bins_per_tick = 5
+        # default: allow maximum number of five bins between every tick
+        num_ticks = len(ticks)
+        bins_per_tick_strategy = [1, 2, 4, 5]
+
+        # make sure we don't have too many bins for the amount of data
+        i = 0
+        bins_per_tick = bins_per_tick_strategy[0]
+        while i < len(bins_per_tick_strategy):
+            if (num_ticks * bins_per_tick) ** 2 < count:
+                bins_per_tick = bins_per_tick_strategy[i]
+            else:
+                break
+            i += 1
 
     binwidth = (ticks[1] - ticks[0]) / bins_per_tick
 
