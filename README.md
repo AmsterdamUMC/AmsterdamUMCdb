@@ -70,6 +70,8 @@ boundaries aligned with the pyplot axis ticks.
   + maxbins -- the maximum number of equally sized bins to create
     
 ## Changelog
+### version 0.1.4
+- fixes binning in `outliers_histogram()` when all values < 1
 ### version 0.1.3
 + Improves binning in `outliers_histogram()`
 ### version 0.1.2
@@ -77,4 +79,4 @@ boundaries aligned with the pyplot axis ticks.
 ### version 0.1.1
 + Fixes Google BigQuery `Project must be a string` error.
 ### version 0.1.0
-+ initial release for ESICM Datathon 20201
++ initial release for ESICM Datathon 2021
