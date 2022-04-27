@@ -4,8 +4,8 @@ import os
 
 def get_dictionary():
     """
-    Gets a dictionary of all items in Amsterdam UMCdb, with (work in progress) translated
-    medical concepts.
+    Gets a dictionary of all items in AmsterdamUMCdb with translated medical concepts mapped to LOINC, SNOMED CT
+    or ATC (work in progress).
 
     Returns:
         dataframe:

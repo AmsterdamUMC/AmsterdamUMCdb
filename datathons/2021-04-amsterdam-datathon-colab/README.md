@@ -1,6 +1,6 @@
-<img src="https://www.esicm.org/wp-content/uploads/2021/02/Plan-de-travail-4-copie-7@3x-150x150.png" alt="Logo" width=128px/>
+<img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_esicm_datathon_2021.png?raw=1" alt="Logo Datathon" width=128px/>
 
-<img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_amds.png?raw=1" alt="Logo" width=128px/>
+<img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_amds.png?raw=1" alt="Logo AMDS" width=128px/>
 
 # 3rd Critical Care Datathon 2021 on AmsterdamUMCdb - Freely Accessible ICU Database
 

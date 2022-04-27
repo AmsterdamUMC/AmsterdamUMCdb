@@ -7,5 +7,3 @@ Contains functions for simplifying data analysis and cleanup of the AmsterdamUMC
 
 #from PiPy repository (released version)
 # pip install amsterdamumcdb
-
-
