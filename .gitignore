@@ -12,3 +12,4 @@
 /amsterdamumcdb.egg-info/
 **/build/
 **/dist/
+**/*venv/
