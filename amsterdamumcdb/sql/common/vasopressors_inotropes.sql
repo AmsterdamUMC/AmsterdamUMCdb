@@ -66,7 +66,7 @@ SELECT
             THEN dose*1000/patientweight/60
             ELSE dose*1000/80 --mean weight
         END
-    WHEN doserateperkg = B'1' AND doseunitid = 11 AND doserateunitid = 5 --unit: µg/kg/min (no conversion needed)
+    WHEN doserateperkg = B'1' AND doseunitid = 11 AND doserateunitid = 4 --unit: µg/kg/min (no conversion needed)
         THEN dose
     WHEN doserateperkg = B'1' AND doseunitid = 11 AND doserateunitid = 5 --unit: µg/kg/uur -> µg/kg/min
         THEN dose/60 
