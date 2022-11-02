@@ -100,6 +100,12 @@ By default, the histogram will be created with bins that are on boundaries align
 
 ## Changelog
 
+### version 0.2.0
++ added sample cohorts (sepsis-3, mechanical ventilation, shock) in `cohorts.py`
++ added SOFA scoring to `scores.py`
++ util functions for PostgresSQL to BigQuery translation
++ move SQL code from notebooks to separate SQL files
+
 ### version 0.1.5
 
 + dictionary: as part of the `ICUnity` project in preparation for
