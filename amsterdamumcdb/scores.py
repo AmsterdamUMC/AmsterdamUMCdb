@@ -53,7 +53,7 @@ def get_sofa_respiration(con) -> pd.DataFrame:
     sofa_respiration.loc[(sofa_respiration['pf_ratio'] < 100) &
                          (sofa_respiration['ventilatory_support'] is True), 'sofa_respiration_score'] = 4
 
-    return sofa_respiration
+    return sofa_respiration.sort_values(by=['admissionid', 'time']).reset_index(drop=True)
 
 
 def get_sofa_cardiovascular_meds(con) -> pd.DataFrame:
@@ -81,31 +81,32 @@ def get_sofa_cardiovascular_meds(con) -> pd.DataFrame:
     # dopamine (itemid 7179) <= 5 or dobutamine (itemid 7178) any dose
     sofa_cardiovascular_meds.loc[(
                                          ((sofa_cardiovascular_meds['itemid'] == 7179) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] <= 5)) |
+                                                 sofa_cardiovascular_meds['max_gamma'] <= 5)) |
                                          (sofa_cardiovascular_meds['itemid'] == 7178)
                                  ), 'sofa_cardiovascular_score'] = 2
 
     # dopamine (itemid 7179) > 5, epinephrine (itemid 6818) <= 0.1, norepinephrine (itemid 7229) <= 0.1
     sofa_cardiovascular_meds.loc[(
                                          ((sofa_cardiovascular_meds['itemid'] == 7179) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] > 5) &
+                                                 sofa_cardiovascular_meds['max_gamma'] > 5) &
                                           (sofa_cardiovascular_meds['max_gamma'] < 15)) |
                                          ((sofa_cardiovascular_meds['itemid'] == 6818) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] <= 0.1)) |
+                                                 sofa_cardiovascular_meds['max_gamma'] <= 0.1)) |
                                          ((sofa_cardiovascular_meds['itemid'] == 7229) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] <= 0.1))
+                                                 sofa_cardiovascular_meds['max_gamma'] <= 0.1))
                                  ), 'sofa_cardiovascular_score'] = 3
 
     # dopamine (itemid 7179) > 15, epinephrine (itemid 6818) > 0.1, norepinephrine (itemid 7229) > 0.1
     sofa_cardiovascular_meds.loc[(
                                          ((sofa_cardiovascular_meds['itemid'] == 7179) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] > 15)) |
+                                                 sofa_cardiovascular_meds['max_gamma'] > 15)) |
                                          ((sofa_cardiovascular_meds['itemid'] == 6818) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] > 0.1)) |
+                                                 sofa_cardiovascular_meds['max_gamma'] > 0.1)) |
                                          ((sofa_cardiovascular_meds['itemid'] == 7229) & (
-                                                     sofa_cardiovascular_meds['max_gamma'] > 0.1))
+                                                 sofa_cardiovascular_meds['max_gamma'] > 0.1))
                                  ), 'sofa_cardiovascular_score'] = 4
-    return sofa_cardiovascular_meds
+    return sofa_cardiovascular_meds.sort_values(by='admissionid').reset_index(
+        drop=True)
 
 
 def get_sofa_platelets(con) -> pd.DataFrame:
@@ -135,7 +136,7 @@ def get_sofa_platelets(con) -> pd.DataFrame:
                        (sofa_platelets['value'] >= 20), 'sofa_coagulation_score'] = 3
     sofa_platelets.loc[(sofa_platelets['value'] < 20), 'sofa_coagulation_score'] = 4
 
-    return sofa_platelets
+    return sofa_platelets.sort_values(by=['admissionid', 'itemid', 'time']).reset_index(drop=True)
 
 
 def get_sofa_bilirubin(con) -> pd.DataFrame:
@@ -163,7 +164,7 @@ def get_sofa_bilirubin(con) -> pd.DataFrame:
     sofa_bilirubin.loc[(sofa_bilirubin['value'] >= 102) & (sofa_bilirubin['value'] < 204), 'sofa_liver_score'] = 3
     sofa_bilirubin.loc[(sofa_bilirubin['value'] >= 204), 'sofa_liver_score'] = 4
 
-    return sofa_bilirubin
+    return sofa_bilirubin.sort_values(by=['admissionid', 'itemid', 'time']).reset_index(drop=True)
 
 
 def get_sofa_cardiovascular_map(con):
@@ -195,7 +196,7 @@ def get_sofa_cardiovascular_map(con):
     # MAP < 70
     sofa_cardiovascular_map.loc[(sofa_cardiovascular_map['lowest_mean_abp'] < 70), 'sofa_cardiovascular_score'] = 1
 
-    return sofa_cardiovascular_map
+    return sofa_cardiovascular_map.sort_values(by=['admissionid']).reset_index(drop=True)
 
 
 def get_sofa_cns(con) -> pd.DataFrame:
@@ -211,21 +212,84 @@ def get_sofa_cns(con) -> pd.DataFrame:
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_gcs = sql_file.read()
-    gcs = read_sql(sql_gcs, con)
+    sofa_cns = read_sql(sql_gcs, con)
 
     print('Processing SOFA Central nervous system...')
-    sofa_cns = gcs.groupby(['admissionid']).agg(
-        min_gcs=pd.NamedAgg(column='gcs_score', aggfunc='min')
-    ).reset_index()
-
     # calculate SOFA Central nervous system score:
-    sofa_cns.loc[:, 'sofa_cns_score'] = 0
-    sofa_cns.loc[(sofa_cns['min_gcs'] >= 13) & (sofa_cns['min_gcs'] < 15), 'sofa_cns_score'] = 1
-    sofa_cns.loc[(sofa_cns['min_gcs'] >= 10) & (sofa_cns['min_gcs'] < 13), 'sofa_cns_score'] = 2
-    sofa_cns.loc[(sofa_cns['min_gcs'] >= 6) & (sofa_cns['min_gcs'] < 10), 'sofa_cns_score'] = 3
-    sofa_cns.loc[(sofa_cns['min_gcs'] < 6), 'sofa_cns_score'] = 4
+    # the SOFA score assumes that the GCS is either determined without sedation, or was known before sedation was
+    # started. Elective patients while being sedated are considered having GCS=15 with respect to the SOFA CNS score.
+    #
+    # Medical staff were trained to document an 'estimated/expected' GCS for sedated/intubated patients at least for the
+    # first 24 hours, so should be the most reliable with respect to SOFA scoring
 
-    return sofa_cns
+    # If scores have been performed by medical staff remove all others
+    admissionids = sofa_cns[sofa_cns['registeredby'] == 'ICV_Medisch Staflid']['admissionid']
+    sofa_cns = sofa_cns.drop(sofa_cns[
+                                 (sofa_cns['admissionid'].isin(admissionids)) &
+                                 ~(sofa_cns['registeredby'] == 'ICV_Medisch Staflid')
+                                 ].index
+                             )
+
+    admissionids = sofa_cns[sofa_cns['registeredby'] == 'ICV_Medisch']['admissionid']
+    sofa_cns = sofa_cns.drop(sofa_cns[
+                                 (sofa_cns['admissionid'].isin(admissionids)) &
+                                 ~(sofa_cns['registeredby'] == 'ICV_Medisch')
+                                 ].index
+                             )
+
+    # The most common problem for SOFA scoring is documenting GCS of 3 while patients being sedated
+    # (e.g. directly after surgery or after intubation)
+    # Drop records with gcs_score = 3 AND sedated
+    sofa_cns = sofa_cns.drop(sofa_cns[
+                                 (sofa_cns['gcs_score'] == 3) & ~(sofa_cns['sedatives_given'].isna()) &
+                                 (sofa_cns['registeredby'].isin(['ICV_IC-Verpleegkundig', 'ICV_MC-Verpleegkundig']))
+                                 ].index
+                             )
+
+    # For GCS going from e.g. E1M1V1 to E3M6V5 within 24 hours
+    sofa_cns[sofa_cns['gcs_score'] == 15][['admissionid', 'measuredat']]
+    first_gcs15 = sofa_cns[sofa_cns['gcs_score'] == 15].groupby('admissionid').agg(
+        first_gcs15_measuredat=('measuredat', 'first'))
+    sofa_cns = sofa_cns.merge(first_gcs15, on='admissionid')
+    sofa_cns = sofa_cns.drop(sofa_cns[
+                                 (sofa_cns['gcs_score'] == 3) &
+                                 (sofa_cns['measuredat'] < sofa_cns['first_gcs15_measuredat'])
+                                 ].index
+                             )
+    # the GCS verbal (V) score could be documented as 'Intubated' (v_score = 0 or -2), often considered similar
+    # to a value of 1. However, this often does not reflect the actual level of consciousness, especially if the
+    # eyes and motor score values are not '1' as well.
+    # First remove all score that do not contain at least a valid eyes and motor score
+    sofa_cns = sofa_cns.drop(sofa_cns[
+                                 (sofa_cns['eyes_score'].isna()) |
+                                 (sofa_cns['motor_score'].isna())
+                                 ].index
+                             )
+    # assume E1M1 also has V1
+    sofa_cns.loc[(sofa_cns['eyes_score'] == 1) & (sofa_cns['motor_score'] == 1), 'verbal_score'] = 1
+
+    # remove intubated scores including scores with E4M6V1 and perform back/forward fill
+    sofa_cns.loc[(sofa_cns['verbal_score'] == -2), 'verbal_score'] = np.NaN
+    sofa_cns.loc[(sofa_cns['verbal_score'] == 0), 'verbal_score'] = np.NaN
+    sofa_cns.loc[(sofa_cns['eyes_score'] == 4) & (sofa_cns['motor_score'] == 6) & (sofa_cns['verbal_score'] == 1),
+                 'verbal_score'] = np.NaN
+
+    # assume for missing verbal scores that future measurements should contain the actual value, otherwise
+    # forward fill for still missing values
+    sofa_cns['verbal_score'] = sofa_cns.groupby(['admissionid'])['verbal_score'].bfill()
+    sofa_cns['verbal_score'] = sofa_cns.groupby(['admissionid'])['verbal_score'].ffill()
+
+    # recalculate total GCS score
+    sofa_cns['gcs_score'] = sofa_cns['eyes_score'] + sofa_cns['motor_score'] + sofa_cns['verbal_score']
+
+    # calculate SOFA GCS score based on 'corrected' GCS scores:
+    sofa_cns.loc[:, 'sofa_cns_score'] = 0
+    sofa_cns.loc[(sofa_cns['gcs_score'] >= 13) & (sofa_cns['gcs_score'] < 15), 'sofa_cns_score'] = 1
+    sofa_cns.loc[(sofa_cns['gcs_score'] >= 10) & (sofa_cns['gcs_score'] < 13), 'sofa_cns_score'] = 2
+    sofa_cns.loc[(sofa_cns['gcs_score'] >= 6) & (sofa_cns['gcs_score'] < 10), 'sofa_cns_score'] = 3
+    sofa_cns.loc[(sofa_cns['gcs_score'] < 6), 'sofa_cns_score'] = 4
+
+    return sofa_cns.sort_values(by=['admissionid', 'time']).reset_index(drop=True)
 
 
 def get_sofa_renal_daily_urine_output(con) -> pd.DataFrame:
@@ -269,7 +333,7 @@ def get_sofa_renal_daily_urine_output(con) -> pd.DataFrame:
     sofa_renal_daily_urine_output.loc[(
                                           ((sofa_renal_daily_urine_output['daily_urine_output'] < 200))
                                       ), 'sofa_renal_score'] = 4
-    return sofa_renal_daily_urine_output
+    return sofa_renal_daily_urine_output.sort_values(by=['admissionid']).reset_index(drop=True)
 
 
 def get_sofa_renal_creatinine(con) -> pd.DataFrame:
@@ -318,7 +382,7 @@ def get_sofa_renal_creatinine(con) -> pd.DataFrame:
                                   ((sofa_renal_creatinine['max_creatinine'] > 440))
                               ), 'sofa_renal_score'] = 4
 
-    return sofa_renal_creatinine
+    return sofa_renal_creatinine.sort_values(by=['admissionid']).reset_index(drop=True)
 
 
 def get_sofa_admission(con) -> pd.DataFrame:
@@ -413,7 +477,9 @@ def get_sofa_admission(con) -> pd.DataFrame:
 
     # Add location and urgency for easier selection:
     sofa = pd.merge(sofa, admissions[['admissionid', 'location', 'urgency']], on='admissionid', how='left')
-    sofa.loc[:, 'urgency'] = pd.to_numeric(sofa.loc[:, 'urgency'])
+    # To force new array with new dtype (instead of inplace setting) (FutureWarning),
+    # changed `sofa.loc[:, 'urgency'] = pd.to_numeric(sofa.loc[:, 'urgency'])` to:
+    admissions['urgency'] = pd.to_numeric(admissions.loc[:, 'urgency'])
 
     print('SOFA processing complete.')
-    return sofa
+    return sofa.sort_values(by=['admissionid']).reset_index(drop=True)

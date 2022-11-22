@@ -1,9 +1,9 @@
 SELECT
     oxy_dev.admissionid,
     oxy_dev.valueid,
-    oxy_dev.value as O2_device,
+    oxy_dev.value as o2_device,
     oxy_dev.measuredat,
-    oxy_flow.value AS O2_flow
+    oxy_flow.value AS o2_flow
 FROM listitems oxy_dev
 LEFT JOIN admissions a ON
     oxy_dev.admissionid = a.admissionid

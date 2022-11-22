@@ -100,6 +100,19 @@ By default, the histogram will be created with bins that are on boundaries align
 
 ## Changelog
 
+### version 0.2.1
++ unified PostgreSQL and BigQuery processing
++ Fixed filtering based boolean indexing using `np.NaN` (pandas default) and `pd.NA` (used by pandas-gbq since the default is `Int64`) leading to different results, particularly when finding the complement using negation.
++ Added unit tests for the cohorts. Forces `pd.Na` to be considered `False` during comparisons.
++ By default, uses only validated data for `amsterdamumcdb` functions for consistent PostgreSQL and BigQuery results.
++ Removed aggregation in SQL code of Glasgow Coma Scale (GCS) in line with other functions.
++ Update SOFA GCS processing for more accurate scoring
++ Added rounding to 1 decimal for conversions (from `kPa` to `mmHg`) in SQL statements
++ Updated deprecated matplotlib style (`seaborn-darkgrid`)
++ Update engine to SQLAlchemy for official pandas support instead of direct psycopg2 connection
++ Moved code from Jupyter `reason_for_admission.ipynb` notebook into `amsterdamumcdb.cohorts` module.
+
+
 ### version 0.2.0
 + added sample cohorts (sepsis-3, mechanical ventilation, shock) in `cohorts.py`
 + added SOFA scoring to `scores.py`

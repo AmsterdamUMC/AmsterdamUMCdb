@@ -2,7 +2,7 @@ WITH fio2_table AS (
     SELECT n.admissionid,
         n.measuredat,
         l.valueid,
-        l.value AS O2_device,
+        l.value AS o2_device,
         CASE
             WHEN n.itemid IN (
                 --FiO2 settings on respiratory support
@@ -13,6 +13,7 @@ WITH fio2_table AS (
             ) THEN TRUE
             ELSE FALSE
         END AS ventilatory_support,
+        n.itemid,
         CASE
             WHEN n.itemid IN (
                 --FiO2 settings on respiratory support
@@ -110,7 +111,7 @@ oxygenation AS (
     SELECT
         pao2.admissionid,
         CASE pao2.unitid
-            WHEN 152 THEN pao2.value * 7.50061683 -- Conversion: kPa to mmHg
+            WHEN 152 THEN ROUND(CAST(pao2.value * 7.50061683 AS NUMERIC), 1) -- Conversion: kPa to mmHg
             ELSE pao2.value
         END AS pao2,
         f.value AS specimen_source,
@@ -121,11 +122,42 @@ oxygenation AS (
         (pao2.measuredat - a.admittedat)/(1000*60) AS time,
         fio2_table.fio2,
         fio2_table.ventilatory_support,
-        (fio2_table.measuredat - pao2.measuredat)/(60*1000) AS FiO2_time_difference,
+        (fio2_table.measuredat - pao2.measuredat)/(60*1000) AS fio2_time_difference,
         ROW_NUMBER() OVER(
             PARTITION BY pao2.admissionid, pao2.measuredat
-            ORDER BY ABS(fio2_table.measuredat - pao2.measuredat)
-        ) AS priority --give priority to nearest FiO2 measurement
+            ORDER BY
+                CASE
+                    --FiO2 settings on respiratory support
+                    WHEN fio2_table.itemid = 12279 THEN 1 --O2 concentratie --measurement by Servo-i/Servo-U ventilator
+                    WHEN fio2_table.itemid = 6699 THEN 2 --FiO2 %: setting on Evita ventilator
+                    WHEN fio2_table.itemid = 12369 THEN 3 --SET %O2: used with BiPap Vision ventilator
+                    WHEN fio2_table.itemid = 16246 THEN 4--Zephyros FiO2: Non-invasive ventilation
+                    --Oxygen Flow settings without respiratory support
+                    WHEN fio2_table.itemid = 8845 THEN 5 -- O2 l/min
+                    WHEN fio2_table.itemid = 10387 THEN 6 --Zuurstof toediening (bloed)
+                    WHEN fio2_table.itemid = 18587 THEN 7 --Zuurstof toediening
+                END, --prefer ventilator measurements over manually entered O2 settings
+                CASE
+                    WHEN fio2_table.measuredat <= pao2.measuredat THEN 1 --prefer FiO2 settings before blood gas measurement
+                    ELSE 2
+                END,
+                ABS(fio2_table.measuredat - pao2.measuredat), --prefer FiO2 settings nearest to blood gas measurement
+                CASE
+                    WHEN pao2.itemid = 21214 THEN 1 --PO2 (bloed) - kPa
+                    WHEN pao2.itemid = 9996 THEN 2 --PO2 (bloed)
+                    WHEN pao2.itemid = 7433 THEN 3 --PO2
+                END, --prefer PaO2 values from original measurement unit; same measurement could be reported twice
+                CASE
+                    WHEN paco2.itemid = 21213 THEN 1--PCO2 (bloed) - kPa
+                    WHEN paco2.itemid = 9990 THEN 2 --pCO2 (bloed)
+                    WHEN  paco2.itemid = 6846 THEN 3 --PCO2
+                END, --prefer PaCO2 values from original measurement unit; same measurement could be reported twice
+                CASE
+                    WHEN f.value ILIKE '%art%' THEN 1
+                    ELSE 2
+                END, --prefer samples that haven been specified as arterial
+                fio2_table.fio2 DESC --prefer highest (calculated) FiO2 for rare cases with multiple oxygen devices
+        ) AS priority
     FROM numericitems pao2
     LEFT JOIN admissions a ON
         pao2.admissionid = a.admissionid
@@ -153,7 +185,7 @@ oxygenation AS (
         )
     --measurements within 24 hours of ICU stay (use 30 minutes before admission to allow for time differences):
     AND (pao2.measuredat - a.admittedat) <= 1000*60*60*24 AND (pao2.measuredat - a.admittedat) >= -(1000*60*30) AND
-    (f.value ILIKE '%art.%' OR f.value IS NULL)  -- source is arterial or undefined (assume arterial)
+    (f.value ILIKE '%art%' OR f.value IS NULL)  -- source is arterial or undefined (assume arterial)
 )
 SELECT * FROM oxygenation
 WHERE priority = 1

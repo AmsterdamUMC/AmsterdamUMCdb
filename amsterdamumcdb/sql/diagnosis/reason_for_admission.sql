@@ -16,12 +16,14 @@ WITH diagnosis_groups AS (
             CASE --prefer NICE > APACHE IV > II > D
                 WHEN itemid = 18671 THEN 6 --NICE APACHEIV diagnosen
                 WHEN itemid = 18669 THEN 5 --NICE APACHEII diagnosen
-                WHEN itemid BETWEEN 16998 AND 17017 THEN 4 --APACHE IV diagnosis
-                WHEN itemid BETWEEN 18589 AND 18602 THEN 3 --APACHE II diagnosis
-                WHEN itemid BETWEEN 13116 AND 13145 THEN 2 --D diagnosis ICU
-                WHEN itemid BETWEEN 16642 AND 16673 THEN 1 --DMC diagnosis Medium Care
+                WHEN itemid = 16997 THEN 4 --APACHE IV Groepen
+                WHEN itemid = 18588 THEN 3 --Apache II Hoofdgroep
+                WHEN itemid = 13110 THEN 2 --D_Hoofdgroep
+                WHEN itemid = 16651 THEN 1 --DMC_Hoofdgroep, Medium Care
             END DESC,
-            updatedat DESC) AS rownum --prioritizes diagnosis with last update time
+            updatedat DESC, --prefer diagnosis_group with most recent update time
+            measuredat DESC --prefer diagnosis_group with most recent session/form time
+            ) AS rownum
     FROM listitems
     WHERE itemid IN (
         --MAIN GROUP - LEVEL 0
@@ -41,7 +43,9 @@ WITH diagnosis_groups AS (
         valueid as diagnosis_subgroup_id,
         ROW_NUMBER() OVER(PARTITION BY admissionid
         ORDER BY
-            updatedat DESC) AS rownum --prioritizes diagnosis with last update time
+            updatedat DESC, --prefer diagnosis_subgroup with most recent update time
+            measuredat DESC --prefer diagnosis_subgroup with most recent session/form time
+            ) AS rownum
     FROM listitems
     WHERE itemid IN (
         --SUB GROUP - LEVEL 1
@@ -149,7 +153,11 @@ WITH diagnosis_groups AS (
                 WHEN itemid BETWEEN 13116 AND 13145 THEN 2 --D diagnosis ICU
                 WHEN itemid BETWEEN 16642 AND 16673 THEN 1 --DMC diagnosis Medium Care
             END DESC,
-            updatedat DESC) AS rownum --prioritizes diagnosis with last update time
+            updatedat DESC, --prefer diagnosis with most recent update time
+            measuredat DESC, --prefer diagnosis with most recent session/form time
+            valueid ASC, --force lower valued diagnoses to prevent arbitrary sorting for rare cases
+            itemid ASC --force lower valued diagnosis groups to prevent arbitrary sorting for rare cases
+            ) AS rownum
     FROM listitems
     WHERE itemid IN (
         -- Diagnosis - LEVEL 2
@@ -266,7 +274,8 @@ WITH diagnosis_groups AS (
             PARTITION BY
                 admissionid
             ORDER BY
-                updatedat DESC) AS rownum --prioritizes diagnosis with last update time
+                updatedat DESC, --prefer sepsis diagnosis with most recent update time
+                measuredat DESC) AS rownum --prefer sepsis diagnosis with most recent session/form time
     FROM listitems
     WHERE
         itemid = 15808
@@ -412,9 +421,10 @@ LEFT JOIN sepsis on admissions.admissionid = sepsis.admissionid
 LEFT JOIN sepsis_antibiotics on admissions.admissionid = sepsis_antibiotics.admissionid
 LEFT JOIN other_antibiotics on admissions.admissionid = other_antibiotics.admissionid
 LEFT JOIN cultures on admissions.admissionid = cultures.admissionid
-WHERE --only diagnosis with last update time
+WHERE --only most recent updated diagnosis
     (diagnoses.rownum = 1 OR diagnoses.rownum IS NULL) AND
     (diagnosis_subgroups.rownum = 1 OR diagnosis_subgroups.rownum IS NULL) AND
     (diagnosis_groups.rownum = 1 OR diagnosis_groups.rownum IS NULL) AND
     (sepsis.rownum = 1 OR sepsis.rownum IS NULL)
+ORDER BY admissions.admissionid
 ;

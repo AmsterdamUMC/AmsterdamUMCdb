@@ -8,8 +8,10 @@
 **/*.bak
 **/*.ps1
 **/*.parquet
+**/*.json
 **/dask-worker-space
 /amsterdamumcdb.egg-info/
 **/build/
 **/dist/
 **/*venv/
+
