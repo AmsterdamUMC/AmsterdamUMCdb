@@ -5,13 +5,13 @@ from .scores import get_sofa_admission, get_sofa_cardiovascular_meds
 from .util import read_sql, query
 
 # surgical regular expressions
-re_cardiosurg = r'(CABG|AVR|hartchirurgie|heart surgery|Chron. cardiovasculaire ziekte|hartkleppen' + \
+re_cardiosurg = r'(?:CABG|AVR|hartchirurgie|heart surgery|Chron. cardiovasculaire ziekte|hartkleppen' + \
                 r'|cardiovascula|MVP|MVR|mitral|tricuspid|pericard|aortic.*valve|lobectom|segment|thorax|Bentall' \
                 r'|aorta-ascendens|aorta-boog' + \
                 r'|aorta-wortel|aorta-descendens|lung|pneumectomie|bullectom|respiratoir ' \
-                r'neoplasm|thoracoscop|thoracotom(y|ie)|respirato' + \
+                r'neoplasm|thoracoscop|thoracotom(?:y|ie)|respirato' + \
                 r'|vrije wand ruptuur|VSR|ASD|pleurectom|intracardiac|aneurysmectom|congenital defect repair)(?! for ' \
-                r'esophag) '
+                r'esophag)'
 re_neurosurg = r'neuro|tentorieel|cranial|subdur|epidur|subarachn|intracerbr|hoofdtrauma|SAB|S.A.H.|CNS|Hoofd|' \
                r'seizures' + \
                r'|craniotom|cranioplast|spinal|dwarslaesie|ventriculstom|transphenoidal|brain|A.V.M.|Arteriovenous ' \
@@ -26,20 +26,20 @@ re_gisurg = r'oesophagus|esophageal|maag|stomach|darm|intestin|gastro-intestin|p
             r'|galblaas|Bleeding-.*GI|other GI|colon|rectal|GI.*surgery|GI ' \
             r'obstruction|Whipple|diverticular|appendectomy' + \
             r'|peritonitis|cholecystectomy|exenteration'
-re_uro = r'(?<!ne)(urolog|cystectomy|genitourinary surgery|prostatectom|ileal\-conduit|orchiectomy|bladder repair' + \
+re_uro = r'(?<!ne)(?:urolog|cystectomy|genitourinary surgery|prostatectom|ileal\-conduit|orchiectomy|bladder repair' + \
          r'|nefrectom|nephrectom|renaal neopsplama)'
 re_obgyn = r'hysterectom|Cesarean|ectopic pregnancy'
 re_gensurg = r'mond/keel|cancer oral|cancer laryngeal|spondylodes|Fusion-spinal|devices for spine|orthopedic' + \
              r'|renaal|metabol|endocrin|thyroid|hip replacement|knee ' \
              r'replacement|adrenalectom|tracheostomy|bewaking|amputation|apnea-sleep' + \
              r'|lymph node dissection|mastectomy|cosmetic|fracture-pathological|bewaking'
-re_trauma_surg = r'(?<!non-)(?<!see )(trauma|hypotherm|smoke inhalation)(?!, see trauma)(?! see)(?!: see)'
+re_trauma_surg = r'(?<!non-)(?<!see )(?:trauma|hypotherm|smoke inhalation)(?!, see trauma)(?! see)(?!: see)'
 re_tx_surg = r'niertransplantatie|kidney transplant|renaal transplantatie|pancreastransplantatie'
 
 re_respfailure_surg = r'resp.*insuff|na respiratoir arrest|arrest, respiratory|atelectas|pneumoni|na ok'
 
 re_sepsis_surg = r'sepsis|pneumoni|GI perforation|perforation/rupture|infection|abscess|GI Vascular ' \
-                 r'ischemia|diverticular|appendectomy|peritonitis '
+                 r'ischemia|diverticular|appendectomy|peritonitis'
 re_cardiacarrest_surg = r'Cardiac arrest.*respiratory arrest|na reanimatie'
 re_hepa = r'lever'
 re_surg_other = r'diagnose anders|respiratoir|cardiovasculair|niet operatief'
@@ -48,7 +48,7 @@ re_surgical_medical = r'Bloeding tractus digestivus|Haemorragische shock|Gastro-
                       r'Bleeding, upper GI' + \
                       r'|hematologisch|Hematologische maligniteit|Haematologisch|Renaal'
 
-re_surgical = '(' + \
+re_surgical = '(?:' + \
               re_cardiosurg + '|' + \
               re_neurosurg + '|' + \
               re_vascsurg + '|' + \
@@ -67,11 +67,11 @@ re_surgical = '(' + \
               ')'
 
 # medical
-re_respfailure_med = r'(?<! without )(resp.*insuff|pneumoni|respirato|luchtweg obstructie|obstruction-airway' + \
+re_respfailure_med = r'(?<! without )(?:resp.*insuff|pneumoni|respirato|luchtweg obstructie|obstruction-airway' + \
                      r'|chronisch obstructieve longziekte|emphysema|asthma|aspiratie|aspiration|longembolie|pulmonary' \
                      r'|pulmonaire' + \
-                     r'|long|lung|atelectas|ALI|ARDS|pleural|cancer, lung|pneumothorax|verdrinking|near ' \
-                     r'drowning|weaning|hemothorax|PCP) '
+                     r'|long|lung|atelectas|ALI/ARDS|ARDS|pleural|cancer, lung|pneumothorax|verdrinking|near ' \
+                     r'drowning|weaning|hemothorax|PCP infect)'
 re_cardiacarrest_med = r'Cardiac arrest.*respiratory arrest|na reanimatie'
 re_sepsis_med = r'sepsis|septic|infect|pneumoni|cholangitis|pancr|endocarditis|meningitis|GI ' \
                 r'perforation|abces|abscess|darm ischaemie|GI vascular|fasciitis' + \
@@ -80,7 +80,7 @@ re_cardio = r'cardiogene shock|shock, cardiogenic|angina|ritme|rhythm|cardiovasc
             r'|myocardial|endocarditis|coronair|coronary|cardiomyopath|tamponade|pericardial|papillary ' \
             r'muscle|^MI|hartkleppen' + \
             r'|CHF|hart falen|decompensatio cordis'
-re_neuro = '(?<!see )(insult|seizure|CVA|observatie neurologische status|intracerebraal ' \
+re_neuro = '(?<!see )(?:insult|seizure|CVA|observatie neurologische status|intracerebraal ' \
            'haematoom|intracranial|intracerebr|subdur|subarachno' + \
            r'|epidur|coma|neurologisch|neurologic|CZS|S\.A\.B\.|neurologie|hoofdtrauma|head|neuro|muscula|spinal' \
            r'|meningitis|encephalitis' + \
@@ -90,7 +90,7 @@ re_bleeding = r'bloeding tractus digestivus|gastro-intestinale bloeding|gastro-i
               r'|bleeding, GI|ulcer'
 re_gi_med = r'ileus|GI medical|GI obstruction'
 re_tox = r'intox|overdosis|overdose|toxicity|withdrawal|drug'
-re_trauma_med = r'(?<!non-)(?<!see )(trauma|hypotherm|smoke inhalation)(?!, see trauma)(?! see)(?!: see)'
+re_trauma_med = r'(?<!non-)(?<!see )(?:trauma|hypotherm|smoke inhalation)(?!, see trauma)(?! see)(?!: see)'
 re_hemonc = r'malign|hematolog|cancer|bloeding|TTP|HUS|leukemi|pancytopen|coagulopath|anemia|neutropen|lymph|sickle'
 re_endo_med = r'metabolisme|keto-acidose|diabetic|metabolic|endocrine|hypertens|acid-base|hypoglyc|thyroid'
 re_shock_med = r'hypovolemische shock|shock|haemorr|hemorrha|anaphylaxis'
@@ -101,7 +101,7 @@ re_vasc_med = r'aneurysm|vascular|cardiovascular medical|Thrombus,arterial|vascu
 re_mon_med = r'apnea, sleep|monitoring|bewaking|observatie'
 re_tx_med = r'transplant'
 
-re_medical = '(' + \
+re_medical = '(?:' + \
              re_respfailure_med + '|' + \
              re_cardiacarrest_med + '|' + \
              re_sepsis_med + '|' + \
@@ -133,13 +133,6 @@ def get_surgical_patients(con) -> pd.DataFrame:
     return combined_diagnoses[combined_diagnoses['surgical'] == 1]
 
 
-def get_cardiothoracic_surgery_patients(con) -> pd.DataFrame:
-    combined_diagnoses = get_reason_for_admission(con)
-    return combined_diagnoses[
-        (combined_diagnoses['surgical'] == 1)
-        & (combined_diagnoses['diagnosis'].str.contains(re_cardiosurg, na=False, flags=re.IGNORECASE))]
-
-
 def get_medical_patients(con) -> pd.DataFrame:
     """Returns a dataframe containing patients with a medical reason for admission.
 
@@ -148,6 +141,18 @@ def get_medical_patients(con) -> pd.DataFrame:
     """
     combined_diagnoses = get_reason_for_admission(con)
     return combined_diagnoses[combined_diagnoses['surgical'] == 0]
+
+
+def get_cardiothoracic_surgery_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with cardio-thoracic surgery as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    return combined_diagnoses[
+        (combined_diagnoses['surgical'] == 1)
+        & (combined_diagnoses['diagnosis'].str.contains(re_cardiosurg, na=False, flags=re.IGNORECASE))]
 
 
 def get_respiratory_failure_patients(con) -> pd.DataFrame:
@@ -159,7 +164,140 @@ def get_respiratory_failure_patients(con) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     combined_diagnoses = get_reason_for_admission(con)
-    return combined_diagnoses[combined_diagnoses['surgical'] == 0]
+    respfailure = combined_diagnoses[
+        (
+                (combined_diagnoses['surgical'] == 1)
+                & (combined_diagnoses['diagnosis'].str.contains(re_respfailure_surg,
+                                                                na=False,
+                                                                flags=re.IGNORECASE))
+        ) | (
+                (combined_diagnoses['surgical'] == 0)
+                & (combined_diagnoses['diagnosis'].str.contains(re_respfailure_med,
+                                                                na=False,
+                                                                flags=re.IGNORECASE))
+        )
+        ]
+
+    return respfailure
+
+
+def get_neurosurgery_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with neurosurgery as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    neurosurg = combined_diagnoses[
+        (combined_diagnoses['surgical'] == 1)
+        & (combined_diagnoses['diagnosis'].str.contains(re_neurosurg, na=False, flags=re.IGNORECASE))
+        ]
+
+    return neurosurg
+
+
+def get_gastrointestinal_surgery_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with gastro-intestinal surgery as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    gisurg = combined_diagnoses[
+        (combined_diagnoses['surgical'] == 1)
+        & (combined_diagnoses['diagnosis'].str.contains(re_gisurg, na=False, flags=re.IGNORECASE))
+        ]
+
+    return gisurg
+
+
+def get_cardiac_arrest_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with cardiac arrest as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    cardiacarrest = combined_diagnoses[
+        (
+                (combined_diagnoses['surgical'] == 1)
+                & (combined_diagnoses['diagnosis'].str.contains(re_cardiacarrest_surg, na=False, flags=re.IGNORECASE))
+        ) | (
+                (combined_diagnoses['surgical'] == 0)
+                & (combined_diagnoses['diagnosis'].str.contains(re_cardiacarrest_med, na=False, flags=re.IGNORECASE))
+        )
+        ]
+
+    return cardiacarrest
+
+
+def get_vascular_surgery_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with vascular surgery as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    vascsurg = combined_diagnoses[
+        (combined_diagnoses['surgical'] == 1)
+        & (combined_diagnoses['diagnosis'].str.contains(re_vascsurg, na=False, flags=re.IGNORECASE))
+        # exclude cerebral aneurysms:
+        & ~(combined_diagnoses['diagnosis_group'].str.contains('neuro', na=False, flags=re.IGNORECASE))
+        ]
+
+    return vascsurg
+
+
+def get_trauma_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with trauma as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    trauma = combined_diagnoses[
+        (
+                (combined_diagnoses['surgical'] == 1)
+                & (combined_diagnoses['diagnosis'].str.contains(re_trauma_surg, na=False, flags=re.IGNORECASE))
+        ) | (
+                (combined_diagnoses['surgical'] == 0)
+                & (combined_diagnoses['diagnosis'].str.contains(re_trauma_med, na=False, flags=re.IGNORECASE))
+        )
+        ]
+
+    return trauma
+
+
+def get_neuro_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with a neurologic disorders as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    neuro = combined_diagnoses[
+        (combined_diagnoses['surgical'] == 0)
+        & (combined_diagnoses['diagnosis'].str.contains(re_neuro, na=False, flags=re.IGNORECASE))
+        # exclude trauma cases
+        & ~(combined_diagnoses['diagnosis'].str.contains(re_trauma_surg, na=False, flags=re.IGNORECASE))
+        ]
+
+    return neuro
+
+
+def get_cardio_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with a cardiac disorders as the primary reason for admission.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    combined_diagnoses = get_reason_for_admission(con)
+    cardio = combined_diagnoses[
+        (combined_diagnoses['surgical'] == 0)
+        & (combined_diagnoses['diagnosis'].str.contains(re_cardio, na=False, flags=re.IGNORECASE))
+        ]
+
+    return cardio
 
 
 def get_sepsis_patients(con) -> pd.DataFrame:
@@ -187,35 +325,7 @@ def get_sepsis_patients(con) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     print('Creating cohort Sepsis-3 at admission (infection and SOFA score ≥2)...')
-    print('Querying reason for admission...')
-    combined_diagnoses = get_reason_for_admission(con)
-    print('Selecting patients with presumed infection...')
-    infection = combined_diagnoses[
-        (
-                (
-                    # use reasons for admission
-                    # surgical admissions with sepsis
-                    (combined_diagnoses['surgical'] == 1)
-                    & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_surg, na=False, flags=re.IGNORECASE))
-                ) | (
-                    # medical admissions with sepsis
-                    (combined_diagnoses['surgical'] == 0)
-                    & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_med, na=False, flags=re.IGNORECASE))
-                ) | (
-                    # uses documentation at admission form (Early Goal Directed Therapy)
-                    (combined_diagnoses['sepsis_at_admission'] == 1)
-                ) | (
-                    # uses administered (therapeutic) antibiotics for determining sepsis
-                    (combined_diagnoses['sepsis_antibiotics_bool'] == 1)
-                ) | (
-                    # uses combination of administered antibiotics (that sometimes are used as prophylaxis) AND
-                    # drawn cultures for determining sepsis
-                    (combined_diagnoses['other_antibiotics_bool'] == 1)
-                    & (combined_diagnoses['sepsis_cultures_bool'] == 1)
-                )
-        ) & ~(combined_diagnoses['sepsis_at_admission'] == 0)
-        # exclude all diagnoses where explicitly 'no sepsis' was documented
-        ]
+    infection = get_infection_patients(con)
 
     print('Selecting patients based on SOFA total score SOFA ≥2')
     sofa = get_sofa_admission(con)
@@ -226,6 +336,46 @@ def get_sepsis_patients(con) -> pd.DataFrame:
 
     sepsis = infection[infection['sofa_total_score'] >= 2]
     return sepsis
+
+
+def get_infection_patients(con) -> pd.DataFrame:
+    """Returns a dataframe containing patients with a (suspected) infection as the primary reason for admission.
+    Similar to the Sepsis-3 cohort patients, but without using SOFA to select patients.
+
+    Arguments:
+        con -- psycopg2 connection or pandas-gbq Google BigQuery config
+    """
+    print('Querying reason for admission...')
+    combined_diagnoses = get_reason_for_admission(con)
+    print('Selecting patients with presumed infection...')
+    infection = combined_diagnoses[
+        (
+                (
+                    # use reasons for admission
+                    # surgical admissions with sepsis
+                        (combined_diagnoses['surgical'] == 1)
+                        & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_surg, na=False, flags=re.IGNORECASE))
+                ) | (
+                    # medical admissions with sepsis
+                        (combined_diagnoses['surgical'] == 0)
+                        & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_med, na=False, flags=re.IGNORECASE))
+                ) | (
+                    # uses documentation at admission form (Early Goal Directed Therapy)
+                    (combined_diagnoses['sepsis_at_admission'] == 1)
+                ) | (
+                    # uses administered (therapeutic) antibiotics for determining sepsis
+                    (combined_diagnoses['sepsis_antibiotics_bool'] == 1)
+                ) | (
+                    # uses combination of administered antibiotics (that sometimes are used as prophylaxis) AND
+                    # drawn cultures for determining sepsis
+                        (combined_diagnoses['other_antibiotics_bool'] == 1)
+                        & (combined_diagnoses['sepsis_cultures_bool'] == 1)
+                )
+        ) & ~((combined_diagnoses['sepsis_at_admission'] == 0).fillna(False))
+        # exclude all diagnoses where explicitly 'no sepsis' was documented, forces comparing `pd.NA`
+        # to be considered False
+        ]
+    return infection
 
 
 def get_shock_patients(con) -> pd.DataFrame:
@@ -247,7 +397,8 @@ def get_shock_patients(con) -> pd.DataFrame:
     lactate = query('common/lactate.sql', con)
 
     # max cardiovascular score based on vasopressors and inotropes
-    max_cardiovascular_score = sofa_cardiovascular_meds.groupby('admissionid')['sofa_cardiovascular_score'].max().to_frame(
+    max_cardiovascular_score = sofa_cardiovascular_meds.groupby('admissionid')[
+        'sofa_cardiovascular_score'].max().to_frame(
         'sofa_cardiovascular_score').sort_values(by=['admissionid']).reset_index()
     shock = pd.merge(combined_diagnoses, max_cardiovascular_score, on='admissionid', how='left')
 
@@ -261,6 +412,7 @@ def get_shock_patients(con) -> pd.DataFrame:
           'AND with lactate >= 2.0 mmol/l...')
     shock = shock[(shock['sofa_cardiovascular_score'] >= 2) & (shock['lactate'] >= 2.0)]
     return shock
+
 
 def get_invasive_ventilation_patients(con) -> pd.DataFrame:
     """Returns a dataframe containing all patients that were mechanically ventilated using an invasive mode.

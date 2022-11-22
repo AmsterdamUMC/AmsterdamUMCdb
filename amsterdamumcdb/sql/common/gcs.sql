@@ -1,4 +1,28 @@
-WITH gcs_components AS (
+WITH sedatives_analgesics AS (
+    SELECT
+        admissionid,
+        itemid,
+        item,
+        start,
+        stop,
+        rate
+    FROM drugitems
+    WHERE ordercategoryid = 65 --2. Spuitpompen: continuous infusions like sedatives/vasopressors
+    AND itemid in (
+        7480	--Propofol (Diprivan)
+        ,7194	--Midazolam (Dormicum)
+        ,6962	--Clonazepam (Rivotril)
+        ,7165	--Lorazepam (Temesta)
+        ,7170	--Diazepam (Valium)
+        ,8190	--Thiopental (Nesdonal)
+        ,9004	--Pentobarbital (Nembutal)
+        ,7219	--Fentanyl
+        ,7225	--Morfine
+        ,9018	--Esketamine (Ketanest-S)
+        ,7097	--Haloperidol (Haldol)
+    )
+    AND rate > 0.5 --lower rates are often used for comfort/pain relieve
+), gcs_components AS (
     SELECT
         eyes.admissionid,
         --eyes.itemid,
@@ -33,7 +57,13 @@ WITH gcs_components AS (
             WHEN 19637 THEN verbal.valueid - 9 --V_EMV_NICE_24uur
             WHEN 19640 THEN verbal.valueid - 15 --V_EMV_NICE_Opname
         END AS verbal_score,
-        eyes.registeredby,
+        eyes.measuredat,
+        eyes.registeredby as eyes_registeredby,
+        eyes.updatedat as eyes_updatedat,
+        motor.registeredby as motor_registeredby,
+        motor.updatedat as motor_updatedat,
+        verbal.registeredby as verbal_registeredby,
+        verbal.updatedat as verbal_updatedat,
         (eyes.measuredat - a.admittedat)/(1000*60) AS time
     FROM listitems eyes
     LEFT JOIN admissions a ON
@@ -71,20 +101,27 @@ WITH gcs_components AS (
     -- measurements within 24 hours of ICU stay:
     AND (eyes.measuredat - a.admittedat) <= 1000*60*60*24 AND (eyes.measuredat - a.admittedat) >= 0
 ), gcs AS (
-    SELECT *,
-        eyes_score + motor_score + (
+    SELECT *
+        ,eyes_score + motor_score + (
             CASE
                 WHEN verbal_score < 1 THEN 1
                 ELSE verbal_score
             END
         ) AS gcs_score
-    FROM gcs_components
-), gcs_prioritized AS (
-    SELECT *,
-        ROW_NUMBER() OVER(
-            PARTITION BY admissionid
-            ORDER BY --orders by discipline
-                CASE registeredby
+        ,CASE
+            WHEN 'ICV_Medisch Staflid' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ICV_Medisch Staflid'
+            WHEN 'ICV_Medisch' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ICV_Medisch'
+            WHEN 'ANES_Anesthesiologie' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ANES_Anesthesiologie'
+            WHEN 'ICV_Physician assistant' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ICV_Physician assistant'
+            WHEN 'ICH_Neurochirurgie' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ICH_Neurochirurgie'
+            WHEN 'ICV_IC-Verpleegkundig' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ICV_IC-Verpleegkundig'
+            WHEN 'ICV_MC-Verpleegkundig' IN (eyes_registeredby, motor_registeredby, verbal_registeredby) THEN 'ICV_MC-Verpleegkundig'
+            ELSE eyes_registeredby
+        END as registeredby
+        ,ROW_NUMBER() OVER(
+            PARTITION BY admissionid, measuredat
+            ORDER BY
+                CASE eyes_registeredby --prefer documentation by senior staff/SOFA trained staff
                     WHEN 'ICV_Medisch Staflid' THEN 1
                     WHEN 'ICV_Medisch' THEN 2
                     WHEN 'ANES_Anesthesiologie'THEN 3
@@ -93,11 +130,42 @@ WITH gcs_components AS (
                     WHEN 'ICV_IC-Verpleegkundig' THEN 6
                     WHEN 'ICV_MC-Verpleegkundig' THEN 7
                     ELSE 8
-                END, gcs_score
+                END,
+                CASE motor_registeredby --prefer documentation by senior staff/SOFA trained staff
+                    WHEN 'ICV_Medisch Staflid' THEN 1
+                    WHEN 'ICV_Medisch' THEN 2
+                    WHEN 'ANES_Anesthesiologie'THEN 3
+                    WHEN 'ICV_Physician assistant' THEN 4
+                    WHEN 'ICH_Neurochirurgie'THEN 5
+                    WHEN 'ICV_IC-Verpleegkundig' THEN 6
+                    WHEN 'ICV_MC-Verpleegkundig' THEN 7
+                    ELSE 8
+                END,
+                CASE verbal_registeredby --prefer documentation by senior staff/SOFA trained staff
+                    WHEN 'ICV_Medisch Staflid' THEN 1
+                    WHEN 'ICV_Medisch' THEN 2
+                    WHEN 'ANES_Anesthesiologie'THEN 3
+                    WHEN 'ICV_Physician assistant' THEN 4
+                    WHEN 'ICH_Neurochirurgie'THEN 5
+                    WHEN 'ICV_IC-Verpleegkundig' THEN 6
+                    WHEN 'ICV_MC-Verpleegkundig' THEN 7
+                    ELSE 8
+                END,
+               eyes_updatedat DESC, motor_updatedat DESC, verbal_updatedat DESC, --prefer most recent updates/corrections
+               eyes_score DESC, motor_score DESC, verbal_score DESC --prefer most recent updates/corrections
         ) AS priority
-    FROM gcs
-    ORDER BY admissionid, gcs_score ASC
+    FROM gcs_components
 )
-SELECT *
-FROM gcs_prioritized
+SELECT
+    gcs.admissionid, gcs.measuredat, gcs.time, gcs.eyes_score, gcs.motor_score, gcs.verbal_score, gcs.registeredby, gcs_score,
+    STRING_AGG(DISTINCT sa.item, '; ' ORDER BY sa.item) AS sedatives_given,
+    MAX((gcs.measuredat - sa.start)/(1000*60)) AS sedatives_started_minutes_before, --negative values indicate not yet running
+    MIN((gcs.measuredat - sa.stop)/(1000*60)) AS sedatives_stopped_minutes_before --negative values indicate still running
+FROM gcs
+LEFT JOIN sedatives_analgesics sa ON
+    gcs.admissionid = sa.admissionid AND
+    gcs.measuredat >= sa.start - (1000*60*60*2) AND --started not more than two hours in the future
+    gcs.measuredat <= sa.stop + (1000*60*60*2) --stopped not more than two hours before measurement
 WHERE priority = 1
+GROUP BY gcs.admissionid, gcs.measuredat, gcs.time, gcs.eyes_score, gcs.motor_score, gcs.verbal_score, gcs.registeredby, gcs_score
+ORDER BY gcs.admissionid, gcs.measuredat

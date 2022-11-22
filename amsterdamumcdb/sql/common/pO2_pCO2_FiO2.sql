@@ -4,13 +4,13 @@ WITH oxygenation AS (
         --pao2.itemid,
         --pao2.item,
         CASE pao2.unitid
-            WHEN 152 THEN pao2.value * 7.50061683 -- Conversion: kPa to mmHg
+            WHEN 152 THEN ROUND(pao2.value * 7.50061683, 1) -- Conversion: kPa to mmHg
             ELSE pao2.value
-        END AS "PaO2",
+        END AS pao2,
         CASE paco2.unitid
-            WHEN 152 THEN paco2.value * 7.50061683 -- Conversion: kPa to mmHg
+            WHEN 152 THEN ROUND(paco2.value * 7.50061683, 1) -- Conversion: kPa to mmHg
             ELSE paco2.value
-        END AS "PaCO2",
+        END AS paco2,
         f.value AS specimen_source,
         --pao2.registeredby,
         CASE
@@ -20,9 +20,9 @@ WITH oxygenation AS (
         (pao2.measuredat - a.admittedat)/(1000*60) AS time,
         --fio2.itemid,
         --fio2.item,
-        fio2.value AS "FiO2",
+        fio2.value AS fio2,
         --fio2.measuredat,
-        (fio2.measuredat - pao2.measuredat)/(60*1000) AS FiO2_time_difference,
+        (fio2.measuredat - pao2.measuredat)/(60*1000) AS fio2_time_difference,
         ROW_NUMBER() OVER(
             PARTITION BY pao2.admissionid, pao2.measuredat
             ORDER BY ABS(fio2.measuredat - pao2.measuredat)
