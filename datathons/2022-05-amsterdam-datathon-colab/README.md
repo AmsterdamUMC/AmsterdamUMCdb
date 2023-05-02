@@ -1,4 +1,4 @@
-<img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_esicm_datathon_2022.jpg?raw=1" alt="Logo Datathon" width=128px/><img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_lccci_square.png?raw=1" alt="Logo LCCCI" width=128px/><img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_amds.png?raw=1" alt="Logo AMDS" width=128px/>
+<img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_esicm_datathon_2022.jpg?raw=1" alt="Logo Datathon" width=128px/><img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_c4i_square.png?raw=1" alt="Logo C4I" width=128px/><img src="https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/img/logo_amds.png?raw=1" alt="Logo AMDS" width=128px/>
 
 # 4th ESICM Critical Care Datathon 2022
 ## AmsterdamUMCdb - Freely Accessible ICU Database
