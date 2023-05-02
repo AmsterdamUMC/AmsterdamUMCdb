@@ -40,7 +40,7 @@ grpcio-status==1.50.0
 idna==3.4
 importlib-metadata==5.0.0
 ipykernel==6.17.1
-ipython==8.6.0
+ipython==8.10.0
 ipython-genutils==0.2.0
 jaraco.classes==3.2.3
 jedi==0.18.1
