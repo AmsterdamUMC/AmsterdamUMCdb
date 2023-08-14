@@ -118,7 +118,7 @@ tenacity==8.1.0
 terminado==0.17.0
 tinycss2==1.2.1
 tomli==2.0.1
-tornado==6.3.2
+tornado==6.3.3
 traitlets==5.5.0
 twine==4.0.1
 urllib3==1.26.12
