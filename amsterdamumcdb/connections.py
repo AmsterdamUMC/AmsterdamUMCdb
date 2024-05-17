@@ -58,7 +58,8 @@ def connect_pg(config_file='config.ini'):
     pg_con.set_session(autocommit=True)
 
     cursor = pg_con.cursor()
-    cursor.execute('SET SCHEMA \'amsterdamumcdb\'');  # set search_path to amsterdamumcdb schema
+    schema = config['psycopg2']['schema']
+    cursor.execute(f'SET SCHEMA \'{schema}\';')  # set search_path to amsterdamumcdb schema
 
     # create SQLAlchemy engine for official pandas database support
     engine = sqlalchemy.create_engine('postgresql+psycopg2://', creator=lambda: pg_con)

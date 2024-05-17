@@ -123,39 +123,70 @@ re_medical = '(?:' + \
              ')'
 
 
-def get_surgical_patients(con) -> pd.DataFrame:
+def get_surgical_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with a surgical reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    return combined_diagnoses[combined_diagnoses['surgical'] == 1]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        return combined_diagnoses[combined_diagnoses['surgical'] == 1]
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/surgical.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_medical_patients(con) -> pd.DataFrame:
+def get_medical_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with a medical reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    return combined_diagnoses[combined_diagnoses['surgical'] == 0]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        return combined_diagnoses[combined_diagnoses['surgical'] == 0]
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/medical.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_cardiothoracic_surgery_patients(con) -> pd.DataFrame:
+
+def get_cardiothoracic_surgery_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with cardio-thoracic surgery as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    return combined_diagnoses[
-        (combined_diagnoses['surgical'] == 1)
-        & (combined_diagnoses['diagnosis'].str.contains(re_cardiosurg, na=False, flags=re.IGNORECASE))]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        return combined_diagnoses[
+            (combined_diagnoses['surgical'] == 1)
+            & (combined_diagnoses['diagnosis'].str.contains(re_cardiosurg, na=False, flags=re.IGNORECASE))]
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/cardiac_surgery.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_respiratory_failure_patients(con) -> pd.DataFrame:
+def get_respiratory_failure_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with respiratory failure as the primary reason for admission. Please
     note that many patients that suffer from (septic) shock will require mechanical ventilation often due to secondary
     respiratory failure (e.g. due to acute respiratory distress syndrome)
@@ -163,144 +194,215 @@ def get_respiratory_failure_patients(con) -> pd.DataFrame:
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    respfailure = combined_diagnoses[
-        (
-                (combined_diagnoses['surgical'] == 1)
-                & (combined_diagnoses['diagnosis'].str.contains(re_respfailure_surg,
-                                                                na=False,
-                                                                flags=re.IGNORECASE))
-        ) | (
-                (combined_diagnoses['surgical'] == 0)
-                & (combined_diagnoses['diagnosis'].str.contains(re_respfailure_med,
-                                                                na=False,
-                                                                flags=re.IGNORECASE))
-        )
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        respfailure = combined_diagnoses[
+            (
+                    (combined_diagnoses['surgical'] == 1)
+                    & (combined_diagnoses['diagnosis'].str.contains(re_respfailure_surg,
+                                                                    na=False,
+                                                                    flags=re.IGNORECASE))
+            ) | (
+                    (combined_diagnoses['surgical'] == 0)
+                    & (combined_diagnoses['diagnosis'].str.contains(re_respfailure_med,
+                                                                    na=False,
+                                                                    flags=re.IGNORECASE))
+            )
+            ]
 
-    return respfailure
+        return respfailure
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/respiratory_failure.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_neurosurgery_patients(con) -> pd.DataFrame:
+
+def get_neurosurgery_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with neurosurgery as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    neurosurg = combined_diagnoses[
-        (combined_diagnoses['surgical'] == 1)
-        & (combined_diagnoses['diagnosis'].str.contains(re_neurosurg, na=False, flags=re.IGNORECASE))
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        neurosurg = combined_diagnoses[
+            (combined_diagnoses['surgical'] == 1)
+            & (combined_diagnoses['diagnosis'].str.contains(re_neurosurg, na=False, flags=re.IGNORECASE))
+            ]
 
-    return neurosurg
+        return neurosurg
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/neurosurgery.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_gastrointestinal_surgery_patients(con) -> pd.DataFrame:
+def get_gastrointestinal_surgery_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with gastro-intestinal surgery as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    gisurg = combined_diagnoses[
-        (combined_diagnoses['surgical'] == 1)
-        & (combined_diagnoses['diagnosis'].str.contains(re_gisurg, na=False, flags=re.IGNORECASE))
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        gisurg = combined_diagnoses[
+            (combined_diagnoses['surgical'] == 1)
+            & (combined_diagnoses['diagnosis'].str.contains(re_gisurg, na=False, flags=re.IGNORECASE))
+            ]
 
-    return gisurg
+        return gisurg
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/gastro_intestinal_surgery.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_cardiac_arrest_patients(con) -> pd.DataFrame:
+def get_cardiac_arrest_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with cardiac arrest as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    cardiacarrest = combined_diagnoses[
-        (
-                (combined_diagnoses['surgical'] == 1)
-                & (combined_diagnoses['diagnosis'].str.contains(re_cardiacarrest_surg, na=False, flags=re.IGNORECASE))
-        ) | (
-                (combined_diagnoses['surgical'] == 0)
-                & (combined_diagnoses['diagnosis'].str.contains(re_cardiacarrest_med, na=False, flags=re.IGNORECASE))
-        )
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        cardiacarrest = combined_diagnoses[
+            (
+                    (combined_diagnoses['surgical'] == 1)
+                    & (combined_diagnoses['diagnosis'].str.contains(re_cardiacarrest_surg, na=False, flags=re.IGNORECASE))
+            ) | (
+                    (combined_diagnoses['surgical'] == 0)
+                    & (combined_diagnoses['diagnosis'].str.contains(re_cardiacarrest_med, na=False, flags=re.IGNORECASE))
+            )
+            ]
 
-    return cardiacarrest
+        return cardiacarrest
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/cardiac_arrest.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_vascular_surgery_patients(con) -> pd.DataFrame:
+def get_vascular_surgery_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with vascular surgery as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    vascsurg = combined_diagnoses[
-        (combined_diagnoses['surgical'] == 1)
-        & (combined_diagnoses['diagnosis'].str.contains(re_vascsurg, na=False, flags=re.IGNORECASE))
-        # exclude cerebral aneurysms:
-        & ~(combined_diagnoses['diagnosis_group'].str.contains('neuro', na=False, flags=re.IGNORECASE))
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        vascsurg = combined_diagnoses[
+            (combined_diagnoses['surgical'] == 1)
+            & (combined_diagnoses['diagnosis'].str.contains(re_vascsurg, na=False, flags=re.IGNORECASE))
+            # exclude cerebral aneurysms:
+            & ~(combined_diagnoses['diagnosis_group'].str.contains('neuro', na=False, flags=re.IGNORECASE))
+            ]
 
-    return vascsurg
+        return vascsurg
+
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/vascular_surgery.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_trauma_patients(con) -> pd.DataFrame:
+def get_trauma_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with trauma as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    trauma = combined_diagnoses[
-        (
-                (combined_diagnoses['surgical'] == 1)
-                & (combined_diagnoses['diagnosis'].str.contains(re_trauma_surg, na=False, flags=re.IGNORECASE))
-        ) | (
-                (combined_diagnoses['surgical'] == 0)
-                & (combined_diagnoses['diagnosis'].str.contains(re_trauma_med, na=False, flags=re.IGNORECASE))
-        )
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        trauma = combined_diagnoses[
+            (
+                    (combined_diagnoses['surgical'] == 1)
+                    & (combined_diagnoses['diagnosis'].str.contains(re_trauma_surg, na=False, flags=re.IGNORECASE))
+            ) | (
+                    (combined_diagnoses['surgical'] == 0)
+                    & (combined_diagnoses['diagnosis'].str.contains(re_trauma_med, na=False, flags=re.IGNORECASE))
+            )
+            ]
 
-    return trauma
+        return trauma
+
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/trauma.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_neuro_patients(con) -> pd.DataFrame:
+def get_neuro_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with a neurologic disorders as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    neuro = combined_diagnoses[
-        (combined_diagnoses['surgical'] == 0)
-        & (combined_diagnoses['diagnosis'].str.contains(re_neuro, na=False, flags=re.IGNORECASE))
-        # exclude trauma cases
-        & ~(combined_diagnoses['diagnosis'].str.contains(re_trauma_surg, na=False, flags=re.IGNORECASE))
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        neuro = combined_diagnoses[
+            (combined_diagnoses['surgical'] == 0)
+            & (combined_diagnoses['diagnosis'].str.contains(re_neuro, na=False, flags=re.IGNORECASE))
+            # exclude trauma cases
+            & ~(combined_diagnoses['diagnosis'].str.contains(re_trauma_surg, na=False, flags=re.IGNORECASE))
+            ]
 
-    return neuro
+        return neuro
+
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
 
-def get_cardio_patients(con) -> pd.DataFrame:
+def get_cardio_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with a cardiac disorders as the primary reason for admission.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    combined_diagnoses = get_reason_for_admission(con)
-    cardio = combined_diagnoses[
-        (combined_diagnoses['surgical'] == 0)
-        & (combined_diagnoses['diagnosis'].str.contains(re_cardio, na=False, flags=re.IGNORECASE))
-        ]
+    if legacy:
+        combined_diagnoses = get_reason_for_admission(con)
+        cardio = combined_diagnoses[
+            (combined_diagnoses['surgical'] == 0)
+            & (combined_diagnoses['diagnosis'].str.contains(re_cardio, na=False, flags=re.IGNORECASE))
+            ]
 
-    return cardio
+        return cardio
+
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
 
-def get_sepsis_patients(con) -> pd.DataFrame:
+def get_sepsis_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with a diagnosis of sepsis at admission.
 
     The [Sepsis-3 definition](https://jamanetwork-com.vu-nl.idm.oclc.org/journals/jama/fullarticle/2492881)
@@ -324,61 +426,75 @@ def get_sepsis_patients(con) -> pd.DataFrame:
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    print('Creating cohort Sepsis-3 at admission (infection and SOFA score ≥2)...')
-    infection = get_infection_patients(con)
+    if legacy:
+        print('Creating cohort Sepsis-3 at admission (infection and SOFA score ≥2)...')
+        infection = get_infection_patients(con)
 
-    print('Selecting patients based on SOFA total score SOFA ≥2')
-    sofa = get_sofa_admission(con)
-    infection = pd.merge(infection, sofa[
-        ['admissionid', 'sofa_respiration_score', 'sofa_coagulation_score',
-         'sofa_liver_score', 'sofa_cardiovascular_score', 'sofa_cns_score',
-         'sofa_renal_score', 'sofa_total_score']], on='admissionid', how='left')
+        print('Selecting patients based on SOFA total score SOFA ≥2')
+        sofa = get_sofa_admission(con)
+        infection = pd.merge(infection, sofa[
+            ['admissionid', 'sofa_respiration_score', 'sofa_coagulation_score',
+             'sofa_liver_score', 'sofa_cardiovascular_score', 'sofa_cns_score',
+             'sofa_renal_score', 'sofa_total_score']], on='admissionid', how='left')
 
-    sepsis = infection[infection['sofa_total_score'] >= 2]
-    return sepsis
+        sepsis = infection[infection['sofa_total_score'] >= 2]
+        return sepsis
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
 
-def get_infection_patients(con) -> pd.DataFrame:
+def get_infection_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing patients with a (suspected) infection as the primary reason for admission.
     Similar to the Sepsis-3 cohort patients, but without using SOFA to select patients.
 
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    print('Querying reason for admission...')
-    combined_diagnoses = get_reason_for_admission(con)
-    print('Selecting patients with presumed infection...')
-    infection = combined_diagnoses[
-        (
-                (
-                    # use reasons for admission
-                    # surgical admissions with sepsis
-                        (combined_diagnoses['surgical'] == 1)
-                        & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_surg, na=False, flags=re.IGNORECASE))
-                ) | (
-                    # medical admissions with sepsis
-                        (combined_diagnoses['surgical'] == 0)
-                        & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_med, na=False, flags=re.IGNORECASE))
-                ) | (
-                    # uses documentation at admission form (Early Goal Directed Therapy)
-                    (combined_diagnoses['sepsis_at_admission'] == 1)
-                ) | (
-                    # uses administered (therapeutic) antibiotics for determining sepsis
-                    (combined_diagnoses['sepsis_antibiotics_bool'] == 1)
-                ) | (
-                    # uses combination of administered antibiotics (that sometimes are used as prophylaxis) AND
-                    # drawn cultures for determining sepsis
-                        (combined_diagnoses['other_antibiotics_bool'] == 1)
-                        & (combined_diagnoses['sepsis_cultures_bool'] == 1)
-                )
-        ) & ~((combined_diagnoses['sepsis_at_admission'] == 0).fillna(False))
-        # exclude all diagnoses where explicitly 'no sepsis' was documented, forces comparing `pd.NA`
-        # to be considered False
-        ]
-    return infection
+    if legacy:
+        print('Querying reason for admission...')
+        combined_diagnoses = get_reason_for_admission(con)
+        print('Selecting patients with presumed infection...')
+        infection = combined_diagnoses[
+            (
+                    (
+                        # use reasons for admission
+                        # surgical admissions with sepsis
+                            (combined_diagnoses['surgical'] == 1)
+                            & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_surg, na=False, flags=re.IGNORECASE))
+                    ) | (
+                        # medical admissions with sepsis
+                            (combined_diagnoses['surgical'] == 0)
+                            & (combined_diagnoses['diagnosis'].str.contains(re_sepsis_med, na=False, flags=re.IGNORECASE))
+                    ) | (
+                        # uses documentation at admission form (Early Goal Directed Therapy)
+                        (combined_diagnoses['sepsis_at_admission'] == 1)
+                    ) | (
+                        # uses administered (therapeutic) antibiotics for determining sepsis
+                        (combined_diagnoses['sepsis_antibiotics_bool'] == 1)
+                    ) | (
+                        # uses combination of administered antibiotics (that sometimes are used as prophylaxis) AND
+                        # drawn cultures for determining sepsis
+                            (combined_diagnoses['other_antibiotics_bool'] == 1)
+                            & (combined_diagnoses['sepsis_cultures_bool'] == 1)
+                    )
+            ) & ~((combined_diagnoses['sepsis_at_admission'] == 0).fillna(False))
+            # exclude all diagnoses where explicitly 'no sepsis' was documented, forces comparing `pd.NA`
+            # to be considered False
+            ]
+        return infection
+
+    else:
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/infection.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
-def get_shock_patients(con) -> pd.DataFrame:
+def get_shock_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing all patients that present with or develop shock within 24 hours of admission.
     Definition:
     - Vasopressor or inotrope administered, AND
@@ -387,34 +503,38 @@ def get_shock_patients(con) -> pd.DataFrame:
         Arguments:
             con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    print('Creating cohort shock at admission/first 24 hours (vasopressors/inotropes administered '
-          'and lactate ≥2 mmol/l)...')
-    print('Querying reason for admission...')
-    combined_diagnoses = get_reason_for_admission(con)
+    if legacy:
+        print('Creating cohort shock at admission/first 24 hours (vasopressors/inotropes administered '
+              'and lactate ≥2 mmol/l)...')
+        print('Querying reason for admission...')
+        combined_diagnoses = get_reason_for_admission(con)
 
-    # re-use SOFA cardiovascular score for vasopressors and/or inotropes
-    sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con)
-    lactate = query('common/lactate.sql', con)
+        # re-use SOFA cardiovascular score for vasopressors and/or inotropes
+        sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con)
+        lactate = query('common/lactate.sql', con)
 
-    # max cardiovascular score based on vasopressors and inotropes
-    max_cardiovascular_score = sofa_cardiovascular_meds.groupby('admissionid')[
-        'sofa_cardiovascular_score'].max().to_frame(
-        'sofa_cardiovascular_score').sort_values(by=['admissionid']).reset_index()
-    shock = pd.merge(combined_diagnoses, max_cardiovascular_score, on='admissionid', how='left')
+        # max cardiovascular score based on vasopressors and inotropes
+        max_cardiovascular_score = sofa_cardiovascular_meds.groupby('admissionid')[
+            'sofa_cardiovascular_score'].max().to_frame(
+            'sofa_cardiovascular_score').sort_values(by=['admissionid']).reset_index()
+        shock = pd.merge(combined_diagnoses, max_cardiovascular_score, on='admissionid', how='left')
 
-    # max lactate
-    lactate_max = lactate.groupby('admissionid')['value'].max().to_frame(
-        'lactate').sort_values(by=['admissionid']).reset_index()
-    shock = pd.merge(shock, lactate_max, on='admissionid', how='left')
+        # max lactate
+        lactate_max = lactate.groupby('admissionid')['value'].max().to_frame(
+            'lactate').sort_values(by=['admissionid']).reset_index()
+        shock = pd.merge(shock, lactate_max, on='admissionid', how='left')
 
-    # only keep patients with vasopressors and/or inotrope support (2 or higher), AND with lactate > 2.0 mmol/l
-    print('Selecting patients with vasopressors and/or inotrope support (SOFA cardiovascular score 2 or higher), '
-          'AND with lactate >= 2.0 mmol/l...')
-    shock = shock[(shock['sofa_cardiovascular_score'] >= 2) & (shock['lactate'] >= 2.0)]
-    return shock
+        # only keep patients with vasopressors and/or inotrope support (2 or higher), AND with lactate > 2.0 mmol/l
+        print('Selecting patients with vasopressors and/or inotrope support (SOFA cardiovascular score 2 or higher), '
+              'AND with lactate >= 2.0 mmol/l...')
+        shock = shock[(shock['sofa_cardiovascular_score'] >= 2) & (shock['lactate'] >= 2.0)]
+        return shock
+
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
 
-def get_invasive_ventilation_patients(con) -> pd.DataFrame:
+def get_invasive_ventilation_patients(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing all patients that were mechanically ventilated using an invasive mode.
     Definition:
     - Mechanical ventilation mode compatible with invasive ventilation.
@@ -422,24 +542,28 @@ def get_invasive_ventilation_patients(con) -> pd.DataFrame:
         Arguments:
             con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
-    print('Creating cohort invasive mechanical ventilation during ICU admission...')
-    print('Querying reason for admission...')
-    combined_diagnoses = get_reason_for_admission(con)
+    if legacy:
+        print('Creating cohort invasive mechanical ventilation during ICU admission...')
+        print('Querying reason for admission...')
+        combined_diagnoses = get_reason_for_admission(con)
 
-    # use mechanical ventilation query
-    print('Querying mechanical ventilation (including possible non-invasive ventilation)...')
-    ventilation = query('lifesupport/mechanical_ventilation.sql', con)
+        # use mechanical ventilation query
+        print('Querying mechanical ventilation (including possible non-invasive ventilation)...')
+        ventilation = query('lifesupport/mechanical_ventilation.sql', con)
 
-    # merge dataframes
-    ventilation = pd.merge(combined_diagnoses, ventilation, on='admissionid', how='left')
+        # merge dataframes
+        ventilation = pd.merge(combined_diagnoses, ventilation, on='admissionid', how='left')
 
-    print('Selecting patients with invasive ventilation...')
-    ventilation = ventilation[ventilation['invasive_bool'].fillna(False)]
+        print('Selecting patients with invasive ventilation...')
+        ventilation = ventilation[ventilation['invasive_bool'].fillna(False)]
 
-    return ventilation
+        return ventilation
+
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
 
-def get_reason_for_admission(con) -> pd.DataFrame:
+def get_reason_for_admission(con, legacy=False) -> pd.DataFrame:
     """Returns a dataframe containing all patients with reasons for admission.
 
     Arguments:
@@ -448,7 +572,10 @@ def get_reason_for_admission(con) -> pd.DataFrame:
 
     # gets the SQL source file
     dirname = os.path.dirname(os.path.abspath(__file__))
-    filename = './sql/diagnosis/reason_for_admission.sql'
+    if legacy:
+        filename = './sql/diagnosis/legacy/reason_for_admission.sql'
+    else:
+        filename = './sql/diagnosis/reason_for_admission.sql'
     sql_filename = os.path.join(dirname, filename)
 
     with open(sql_filename, 'r') as file:
