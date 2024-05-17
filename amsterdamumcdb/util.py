@@ -47,7 +47,13 @@ def pg2bq(sql):
     re_pg_byte = r'(?P<column>[^\(\s]+)\s+(?P<operator>=)\s+(?P<byte>B\'(?P<value>[0-1])\')'
     re_bq_int = r'\g<column> \g<operator> \g<value>'
     sql_translated = re.sub(re_pg_byte, re_bq_int, sql_translated)
+
+    # translate INTERVAL
+    re_pg_interval = r'(?P<interval>INTERVAL)\s+\'(?P<quantity>[0-9]+)\s+(?P<unit>\w+)\''
+    re_bg_interval = r'\g<interval> \g<quantity> \g<unit>'
+    sql_translated = re.sub(re_pg_interval, re_bg_interval, sql_translated)
     return sql_translated
+
 
 def union_tables(match_object):
     """
