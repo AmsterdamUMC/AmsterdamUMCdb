@@ -21,7 +21,32 @@ repository: [![Open In Colab](https://colab.research.google.com/assets/colab-bad
 
 ## The challenges
 
-The challenges will be announced during the opening session of the datathon and published here afterwards.
+# Track 1 - To transfuse or not to transfuse? That is the question
+- We all know about the Janus face of blood transfusion
+  * Oxygen carriage vs microvascular and immune consequences
+  * Restrictive transfusion thresholds are en vogue but does one size fit everyone?
+- Questions you might ask
+  * Do current Hb thresholds work for everyone? Or can you find sub-groups where this could be individualised?
+  * Do all patients respond the same to transfusion? Physiologically? Immunologically?
+  * What about other blood products? Platelets or plasma?
+
+# Track 2 - The true value of blood gases
+- Blood gases are common and data-rich!
+  * Does it matter?
+- Questions to consider include (but not limited to)
+  * Ok, you ventilate protectively. Do you care about acidaemia at all? Should you care (and how much)? 
+  * Are there blood gas phenotypes? Can you model their trajectories?
+  * Can you validate acid-base physiology? How strong are strong ions? Is albumin key? Or does it not matter?
+  * Don’t forget glucose (measured as part of routine blood gas analysis in our database): just another target or marker of metabolic stress?
+
+# Track 3 - ICUr type: phenotypes from data
+- We measure blood pressure, urine output, blood gases, ventilatory parameters. What does it mean?
+  * Can you find meaningful similarities between patients in the data?
+- Questions include
+  * Can you find phenotypes (clusters of similar patients) from the data? 
+  * How do phenotypes evolve over time? Are there temporal phenotypes?
+  * Are they plausible biologically?
+  * Do different phenotypes respond differently to targets or treatment strategies?
 
 ## Troubleshooting
 
