@@ -31,6 +31,7 @@ WHERE
                      c.concept_id = po.procedure_concept_id
              WHERE
                  procedure_datetime < vo.visit_start_datetime
-                 AND procedure_datetime >= vo.visit_start_datetime - INTERVAL '8 HOUR')
+                 AND procedure_datetime >= vo.visit_start_datetime - INTERVAL '8 HOUR'
+                 AND NOT po.provider_id IS NULL)
 ORDER BY
     person_id, visit_occurrence_id
