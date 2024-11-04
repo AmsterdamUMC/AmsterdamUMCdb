@@ -82,13 +82,16 @@ However, these traditional models are often limited in scope and may not capture
 
 ## Database
 
-### Cohorts
+### Possible cohorts
 - Sepsis patients
 - Shock patients
+- General ICU patients
 
 ### Possible Outcomes
 - Occurrence of AKI 1-3 according to KDIGO guidelines
 - Necessity of renal replacement therapy
+- In-hospital or in-ICU mortality
+- ICU length-of-stay
 
 ### Features
 
