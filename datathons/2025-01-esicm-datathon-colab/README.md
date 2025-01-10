@@ -3,7 +3,7 @@
 # 7th ESICM Critical Care Datathon 2025
 ## AmsterdamUMCdb - Freely Accessible ICU Database
 
-version 1.5.0 May 2024
+version 1.5.0 May 2024  
 Copyright &copy; 2003-2025 Amsterdam UMC - Amsterdam Medical Data Science
 
 ## Introduction
@@ -21,7 +21,12 @@ repository: [![Open In Colab](https://colab.research.google.com/assets/colab-bad
 
 ## The challenges
 
-The challenges will be announced shortly.
+### Track 1 - Digital twins
+Digital twins are creating a buzz and for good reason as they may inform us how to treat their physical counterparts - your intensive care patients (!) - in real time. However, there is often much confusion on what digital twins really are, and how they can be developed for the specific context of intensive care medicine. Therefore, we challenge you to create what you think is a digital twin or a component of a digital twin. For inspiration, you might think of developing a reinforcement learning model to guide treatment choices for circulatory or respiratory failure. Or perhaps improve a physiological model of circulation or ventilation with real world data? Can large language models play a role here? Or perhaps something completely different. The choice is yours!
+
+### Track 2 - Real world evidence
+Clinical trials are important pillars of evidence based medicine. However, they are very resource intensive and often either too narrow or too wide. If they are too narrow, the results may not apply to the patient you have in front of you. If they are too wide their findings also fail to provide guidance because of heterogeneity between included patients. This is where data science techniques leveraging large-scale real-world data can provide valuable insights.Therefore we challenge you to use data to generate the evidence you need to inform your practice. You could think of attempting to replicate a well known trial in a real world population, using target trial emulation. Or you could investigate whether routine interventions work better or worse or equally in specific patients or circumstances. Or you might determine individual treatment effects for established treatment strategies. Up to you!
+
 
 ## Troubleshooting
 
