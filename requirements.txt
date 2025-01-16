@@ -37,7 +37,7 @@ googleapis-common-protos==1.57.0
 greenlet==2.0.1
 grpcio==1.53.2
 grpcio-status==1.50.0
-idna==3.4
+idna==3.7
 importlib-metadata==5.0.0
 ipykernel==6.17.1
 ipython==8.10.0
