@@ -44,7 +44,7 @@ ipython==8.10.0
 ipython-genutils==0.2.0
 jaraco.classes==3.2.3
 jedi==0.18.1
-Jinja2==3.1.2
+Jinja2==3.1.5
 json5==0.9.10
 jsonschema==4.17.0
 jupyter-server==1.23.2
