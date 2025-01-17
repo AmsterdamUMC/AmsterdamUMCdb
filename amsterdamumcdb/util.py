@@ -55,7 +55,7 @@ def pg2bq(sql):
     return sql_translated
 
 
-def union_tables(match_object):
+def union_tables(match_object, legacy=False):
     """
     Replaces FROM/JOIN statement of numericitems/listitems with UNION ALL to retrieve all unvalidated records
     """
@@ -69,7 +69,7 @@ def union_tables(match_object):
         return f'{command} (SELECT * FROM {table} UNION ALL SELECT * FROM {table}_unvalidated) {table} '
 
 
-def exclude_unvalidated(match_object):
+def exclude_unvalidated(match_object, legacy=False):
     """
     Excluded unvalidated data from the numericitems and listitems table by adding `WHERE NOT registeredby IS NULL`
     to the respective FROM/JOIN table statements.
@@ -84,7 +84,7 @@ def exclude_unvalidated(match_object):
         return f'{command} (SELECT * FROM {table} WHERE NOT registeredby IS NULL) {table} '
 
 
-def select_validated(sql, con, include_unvalidated=False):
+def select_validated(sql, con, include_unvalidated=False, legacy=False):
     """
     Translate query by either including or excluding unvalidated (high volume) data
     When using BigQuery:
@@ -95,32 +95,38 @@ def select_validated(sql, con, include_unvalidated=False):
         sql: SQL statement
         con: psycopg2 connection or pandas-gbq Google BigQuery config
         include_unvalidated: If True will include the unvalidated data (Default: False)
+        legacy: set to True to allow processing the legacy version of AmsterdamUMCdb.
 
     Returns: Transformed SQL statement
     """
-
-    re_tables = r'(?P<command>FROM|JOIN)\s*(?P<table>numericitems|listitems)\s*(?:AS\s*)?(?!RIGHT|LEFT|FULL|' \
+    if legacy:
+        re_tables = r'(?P<command>FROM|JOIN)\s*(?P<table>numericitems|listitems)\s*(?:AS\s*)?(?!RIGHT|LEFT|FULL|' \
                 r'INNER|OUTER|JOIN|UNION|WHERE|GROUP|ON|ORDER|HAVING|LIMIT)(?P<alias>\S*)'
 
-    if include_unvalidated:
-        if type(con) is dict: # BigQuery config
-            # UNION ALL regular and unvalidated tables
-            sql_translated = re.sub(re_tables, union_tables, sql)
-            return sql_translated
+        if include_unvalidated:
+            if type(con) is dict: # BigQuery config
+                # UNION ALL regular and unvalidated tables
+                sql_translated = re.sub(re_tables, union_tables, sql)
+                return sql_translated
+            else:
+                # local databases already contain all values in the numericitems and listitems tables
+                return sql
         else:
-            # local databases already contain all values in the numericitems and listitems tables
-            return sql
+            if type(con) is dict: # BigQuery config
+                # BigQuery already has unvalidated data removed from main tables
+                return sql
+            else:
+                # remove unvalidated data from SQL query
+                sql_translated = re.sub(re_tables, exclude_unvalidated, sql)
+                return sql_translated
     else:
-        if type(con) is dict: # BigQuery config
-            # BigQuery already has unvalidated data removed from main tables
-            return sql
+        if include_unvalidated:
+            raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
         else:
-            # remove unvalidated data from SQL query
-            sql_translated = re.sub(re_tables, exclude_unvalidated, sql)
-            return sql_translated
+            return sql
 
 
-def read_sql(sql, con, include_unvalidated=False):
+def read_sql(sql, con, include_unvalidated=False, legacy=False):
     """
     Small wrapper around Pandas read_sql and read_gbq to de-duplicate code fragments that should work both on (local)
     postgreSQL instances and Google BigQuery ofr AmsterdamUMCdb.
@@ -132,10 +138,10 @@ def read_sql(sql, con, include_unvalidated=False):
     if type(con) is dict:  # BigQuery config
         # translate query from PostgreSQL dialect to BigQuery
         sql = pg2bq(sql)
-        sql = select_validated(sql=sql, con=con, include_unvalidated=include_unvalidated)
+        sql = select_validated(sql=sql, con=con, include_unvalidated=include_unvalidated, legacy=legacy)
         result = pd.read_gbq(sql, configuration=con, use_bqstorage_api=True)
     else:
-        sql = select_validated(sql=sql, con=con, include_unvalidated=include_unvalidated)
+        sql = select_validated(sql=sql, con=con, include_unvalidated=include_unvalidated, legacy=legacy)
         # Escape SQL for use in SQLAlchemy to prevent 'TypeError: dict is not a sequence' when using `%`
         result = pd.read_sql(sqlalchemy.text(sql), con)
 

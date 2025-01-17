@@ -38,13 +38,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_cardiothoracic_surgery_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_cardiothoracic_surgery_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(5938, count_gbq)
@@ -55,13 +55,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_infection_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_infection_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(3152, count_gbq)
@@ -72,13 +72,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_respiratory_failure_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_respiratory_failure_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(1517, count_gbq)
@@ -89,13 +89,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_neurosurgery_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_neurosurgery_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(1618, count_gbq)
@@ -106,13 +106,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_gastrointestinal_surgery_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_gastrointestinal_surgery_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(1149, count_gbq)
@@ -123,13 +123,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_cardiac_arrest_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_cardiac_arrest_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(961, count_gbq)
@@ -140,13 +140,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_vascular_surgery_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_vascular_surgery_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(1037, count_gbq)
@@ -157,13 +157,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_trauma_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_trauma_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(1242, count_gbq)
@@ -174,13 +174,13 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_neuro_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_neuro_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(627, count_gbq)
@@ -191,34 +191,36 @@ class CohortsTests(unittest.TestCase):
         patients_gbq = cohorts.get_cardio_patients(con=self.config_gbq)
         print(patients_gbq)
         count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        print(f'{count_gbq} records')
 
         print('PostgreSQL...')
         patients_pg = cohorts.get_cardio_patients(con=self.con_pg)
         print(patients_pg)
         count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+        print(f'{count_pg} records')
 
         self.assertEqual(count_gbq, count_pg)
         # TODO: self.assertEqual(538, count_gbq)
 
     # @unittest.skip("Skip Sepsis-3 cohort testing") # this test will take some time
     def test_sepsis3_cohort(self):
-        print('Testing Sepsis-3 cohort...')
-        print('Google BigQuery...')
-        patients_gbq = adb.get_sepsis_patients(con=self.config_gbq)
-        print(patients_gbq)
-        count_gbq = len(patients_gbq)
-        print(f'{count_gbq} patients')
+        # TODO: implement for OMOP
+        with self.assertRaises(NotImplementedError):
+            print('Testing Sepsis-3 cohort...')
+            print('Google BigQuery...')
+            patients_gbq = adb.get_sepsis_patients(con=self.config_gbq)
+            print(patients_gbq)
+            count_gbq = len(patients_gbq)
+            print(f'{count_gbq} records')
 
-        print('PostgreSQL...')
-        patients_pg = adb.get_sepsis_patients(con=self.con_pg)
-        print(patients_pg)
-        count_pg = len(patients_pg)
-        print(f'{count_pg} patients')
+            print('PostgreSQL...')
+            patients_pg = adb.get_sepsis_patients(con=self.con_pg)
+            print(patients_pg)
+            count_pg = len(patients_pg)
+            print(f'{count_pg} records')
 
-        self.assertEqual(count_gbq, count_pg)
-        # TODO: self.assertEqual(count_gbq, 3019)
+            self.assertEqual(count_gbq, count_pg)
+            # TODO: self.assertEqual(count_gbq, 3019)
 
 
 if __name__ == '__main__':
