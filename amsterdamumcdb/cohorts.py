@@ -380,7 +380,14 @@ def get_neuro_patients(con, legacy=False) -> pd.DataFrame:
         return neuro
 
     else:
-        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/neuro.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
 def get_cardio_patients(con, legacy=False) -> pd.DataFrame:
@@ -399,7 +406,14 @@ def get_cardio_patients(con, legacy=False) -> pd.DataFrame:
         return cardio
 
     else:
-        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+        # gets the SQL source file
+        dirname = os.path.dirname(os.path.abspath(__file__))
+        filename = './sql/diagnosis/cardio.sql'
+        sql_filename = os.path.join(dirname, filename)
+
+        with open(sql_filename, 'r') as file:
+            sql = file.read()
+        return read_sql(sql, con)
 
 
 def get_sepsis_patients(con, legacy=False) -> pd.DataFrame:

@@ -4,7 +4,7 @@ import os
 import configparser
 
 import numpy as np
-import psycopg
+import psycopg2
 import pandas as pd
 import sqlalchemy
 from sqlalchemy import text
@@ -23,12 +23,12 @@ schema = config['cdm']['schema']
 
 print("Reading concept table...")
 # Open a connection to the postgres database:
-pg_con = psycopg.connect(dbname=config['cdm']['dbname'],
+pg_con = psycopg2.connect(dbname=config['cdm']['dbname'],
                          user=config['cdm']['username'], password=config['cdm']['password'],
                          host=config['cdm']['host'], port=config['cdm']['port'])
 
 # create SQLAlchemy engine for official pandas database support
-engine = sqlalchemy.create_engine('postgresql+psycopg://', creator=lambda: pg_con)
+engine = sqlalchemy.create_engine('postgresql+psycopg2://', creator=lambda: pg_con)
 con = engine.connect()
 
 sql = f"SELECT * FROM {schema}.concept;"
@@ -73,20 +73,20 @@ for vocabulary in local_vocabularies:
         # another table
         voc = "listitems_value"
         concepts = pd.read_csv(urljoin(folder, f"{voc}.usagi.csv"))
-        concepts = concepts[concepts['domainId'].isin([
+        concepts = concepts[~(concepts['domainId'].isin([
             "Meas Value",
             "Device",
             "Procedure",
             "Condition"
-        ])]
+        ]))]
 
         # remove duplicates from listitems -> reason_for_admission
         voc = 'reason_for_admission'
         co_reason_for_admission = pd.read_csv(urljoin(folder, f"{voc}.usagi.csv"))
-        concepts = concepts[~concepts['sourceCode'].isin(co_reason_for_admission['sourceCode'])]
+        concepts = concepts[~(concepts['sourceCode'].isin(co_reason_for_admission['sourceCode']))]
 
         # remove duplicates from listitems -> admissions_destination
-        concepts = concepts[~concepts['ADD_INFO:itemid'] == 10472]
+        concepts = concepts[~(concepts['ADD_INFO:itemid'] == 10472)]
 
     elif vocabulary == 'listitems_device':
         voc = "listitems_value"
@@ -110,6 +110,12 @@ for vocabulary in local_vocabularies:
     # but missing from admissions
     if 'ADD_INFO:source_concept' not in concepts.columns:
         concepts['ADD_INFO:source_concept'] = np.NAN
+
+    # stored linked concept (value of attribute)
+    if 'ADD_INFO:itemid' not in concepts.columns:
+        concepts['value_of_source_code'] = np.NAN
+    else:
+        concepts['value_of_source_code'] = concepts['ADD_INFO:itemid']
 
     # add count columns if available
     if 'ADD_INFO:count_validated' in concepts.columns:
@@ -147,6 +153,7 @@ for vocabulary in local_vocabularies:
         dictionary = dictionary[[
             "conceptId", "concept_name", "domain_id", "concept_class_id", "vocabulary_id",
             "concept_code", "source_vocabulary_id", "sourceCode", "source_code_description",
+            "value_of_source_code",
             "source_frequency", "source_frequency_validated",
             "mappingStatus", "equivalence"
         ]]
@@ -166,6 +173,24 @@ for vocabulary in local_vocabularies:
         maps_list.append(dictionary)
 
 dictionary = pd.concat(maps_list)
+
+# create list of possible linked attributes (e.g. value_of_concept_id)
+attributes = dictionary[['source_code', 'concept_id']]
+attributes = attributes[attributes['concept_id'] > 0]
+attributes = attributes.rename(columns={
+    "source_code": "value_of_source_code",
+    "concept_id": "value_of_concept_id",
+})
+
+dictionary = dictionary.merge(attributes, on="value_of_source_code", how="left")
+
+dictionary = dictionary[[
+    'concept_id', 'concept_name', 'domain_id', 'concept_class_id',
+    'vocabulary_id', 'concept_code', 'source_vocabulary_id', 'source_code',
+    'source_code_description', 'value_of_concept_id', 'value_of_source_code',
+    'source_frequency', 'source_frequency_validated',
+    'mapping_status', 'equivalence',
+    ]]
 
 # convert to the best possible data types to prevent integers from becoming floats
 dictionary = dictionary.convert_dtypes()

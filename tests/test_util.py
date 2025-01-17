@@ -35,38 +35,44 @@ class UtilTests(unittest.TestCase):
     con_pg = connections.connect_pg(config)
 
     def test_sql_validated(self):
-        orig_sql = "SELECT COUNT(*) FROM numericitems"
+        # legacy:
+        # orig_sql = "SELECT COUNT(*) FROM numericitems"
+        orig_sql = "SELECT COUNT(*) FROM measurement WHERE NOT provider_id IS NULL"
         print(f'Original SQL statement for validated data:\n{orig_sql}')
 
         sql_gbq = util.select_validated(orig_sql, con=self.config_gbq)
         print(f'Transformed SQL statement for Google BigQuery:\n{sql_gbq}')
         gbq = util.read_sql(orig_sql, con=self.config_gbq)
-        print(gbq)
+        print(gbq.values[0][0])
 
         sql_pg = util.select_validated(orig_sql, con=self.con_pg)
         print(f'Transformed SQL statement for PostgreSQL:\n{sql_pg}')
         pg = util.read_sql(orig_sql, con=self.con_pg)
-        print(pg)
+        print(pg.values[0][0])
 
-        self.assertEqual(gbq.values[0][0], pg.values[0][0])
-        self.assertEqual(gbq.values[0][0], 68672818)  # number of validated numericitems excluding unvalidated
+        self.assertEqual(int(gbq.values[0][0]), int(pg.values[0][0]))
+        # TODO: self.assertEqual(gbq.values[0][0], 68672818)  # number of validated numericitems excluding unvalidated
 
     def test_sql_include_unvalidated(self):
-        orig_sql = "SELECT COUNT(*) FROM numericitems"
-        print(f'Original SQL statement for unvalidated data:\n{orig_sql}')
+        # TODO: implement for OMOP
+        with self.assertRaises(NotImplementedError):
+            # legacy:
+            # orig_sql = "SELECT COUNT(*) FROM numericitems"
+            orig_sql = "SELECT COUNT(*) FROM measurement WHERE provider_id IS NULL AND NOT provider IS NULL"
+            print(f'Original SQL statement for unvalidated data:\n{orig_sql}')
 
-        sql_gbq = util.select_validated(orig_sql, con=self.config_gbq, include_unvalidated=True)
-        print(f'Transformed SQL statement for Google BigQuery:\n{sql_gbq}')
-        gbq = util.read_sql("SELECT COUNT(*) FROM numericitems", con=self.config_gbq, include_unvalidated=True)
-        print(gbq)
+            sql_gbq = util.select_validated(orig_sql, con=self.config_gbq, include_unvalidated=True)
+            print(f'Transformed SQL statement for Google BigQuery:\n{sql_gbq}')
+            gbq = util.read_sql("SELECT COUNT(*) FROM numericitems", con=self.config_gbq, include_unvalidated=True)
+            print(gbq)
 
-        sql_pg = util.select_validated(orig_sql, con=self.con_pg, include_unvalidated=True)
-        print(f'Transformed SQL statement for PostgreSQL:\n{sql_pg}')
-        pg = util.read_sql("SELECT COUNT(*) FROM numericitems", con=self.con_pg, include_unvalidated=True)
-        print(pg)
+            sql_pg = util.select_validated(orig_sql, con=self.con_pg, include_unvalidated=True)
+            print(f'Transformed SQL statement for PostgreSQL:\n{sql_pg}')
+            pg = util.read_sql("SELECT COUNT(*) FROM numericitems", con=self.con_pg, include_unvalidated=True)
+            print(pg)
 
-        self.assertEqual(gbq.values[0][0], pg.values[0][0])
-        self.assertEqual(gbq.values[0][0], 977625612)  # total number of numericitems including unvalidated
+            self.assertEqual(gbq.values[0][0], pg.values[0][0])
+            # TODO legacy: self.assertEqual(gbq.values[0][0], 977625612)  # total number of numericitems including unvalidated
 
 
 if __name__ == '__main__':

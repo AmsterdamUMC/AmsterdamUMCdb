@@ -7,7 +7,7 @@ from .util import read_sql
 dirname = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_sofa_respiration(con) -> pd.DataFrame:
+def get_sofa_respiration(con, legacy=False) -> pd.DataFrame:
     """
     Return SOFA Respiration: PaO2 / FiO2 (mmHg)
 
@@ -19,7 +19,12 @@ def get_sofa_respiration(con) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     print('Querying SOFA Respiration...')
-    filename = './sql/common/pO2_FiO2_estimated.sql'
+
+    if legacy:
+        filename = './sql/common/legacy/pO2_FiO2_estimated.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_sofa_respiration = sql_file.read()
@@ -56,14 +61,19 @@ def get_sofa_respiration(con) -> pd.DataFrame:
     return sofa_respiration.sort_values(by=['admissionid', 'time']).reset_index(drop=True)
 
 
-def get_sofa_cardiovascular_meds(con) -> pd.DataFrame:
+def get_sofa_cardiovascular_meds(con, legacy=False) -> pd.DataFrame:
     """
     Returns SOFA: Cardiovascular - Hypotension, cardiovascular medication: vasopressors and / or inotropes
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     print('Querying SOFA Cardiovascular: vasopressors/inotropes...')
-    filename = './sql/common/vasopressors_inotropes.sql'
+
+    if legacy:
+        filename = './sql/common/legacy/vasopressors_inotropes.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r', encoding='utf-8') as sql_file:
         sql_sofa_cardiovascular = sql_file.read()
@@ -109,7 +119,7 @@ def get_sofa_cardiovascular_meds(con) -> pd.DataFrame:
         drop=True)
 
 
-def get_sofa_platelets(con) -> pd.DataFrame:
+def get_sofa_platelets(con, legacy=False) -> pd.DataFrame:
     """
     Return SOFA Coagulation score.
 
@@ -119,7 +129,12 @@ def get_sofa_platelets(con) -> pd.DataFrame:
     ############################################
     print('Querying SOFA Coagulation...')
     # get platelets (thrombocytes)
-    filename = './sql/common/platelets.sql'
+
+    if legacy:
+        filename = './sql/common/legacy/platelets.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_sofa_platelets = sql_file.read()
@@ -139,7 +154,7 @@ def get_sofa_platelets(con) -> pd.DataFrame:
     return sofa_platelets.sort_values(by=['admissionid', 'itemid', 'time']).reset_index(drop=True)
 
 
-def get_sofa_bilirubin(con) -> pd.DataFrame:
+def get_sofa_bilirubin(con, legacy=False) -> pd.DataFrame:
     """
     Returns SOFA Liver scores.
 
@@ -150,8 +165,14 @@ def get_sofa_bilirubin(con) -> pd.DataFrame:
     ##################################
     # get bilirubin
     print('Querying SOFA Liver...')
-    filename = './sql/common/bilirubin.sql'
+
+    if legacy:
+        filename = './sql/common/legacy/bilirubin.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
+
     with open(sql_filename, 'r') as sql_file:
         sql_sofa_bilirubin = sql_file.read()
     sofa_bilirubin = read_sql(sql_sofa_bilirubin, con)
@@ -167,14 +188,19 @@ def get_sofa_bilirubin(con) -> pd.DataFrame:
     return sofa_bilirubin.sort_values(by=['admissionid', 'itemid', 'time']).reset_index(drop=True)
 
 
-def get_sofa_cardiovascular_map(con):
+def get_sofa_cardiovascular_map(con, legacy=False):
     """
     Returns SOFA Mean arterial pressure score
     Arguments:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     print('Querying SOFA Cardiovascular: MAP...')
-    filename = './sql/common/mean_abp.sql'
+
+    if legacy:
+        filename = './sql/common/mean_abp.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_mean_abp = sql_file.read()
@@ -199,7 +225,7 @@ def get_sofa_cardiovascular_map(con):
     return sofa_cardiovascular_map.sort_values(by=['admissionid']).reset_index(drop=True)
 
 
-def get_sofa_cns(con) -> pd.DataFrame:
+def get_sofa_cns(con, legacy=False) -> pd.DataFrame:
     """
     Return SOFA Central nervous system score
 
@@ -208,7 +234,12 @@ def get_sofa_cns(con) -> pd.DataFrame:
     """
     # get Glasgow Coma Scale-score
     print('Querying SOFA Central nervous system...')
-    filename = './sql/common/gcs.sql'
+
+    if legacy:
+        filename = './sql/common/gcs.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_gcs = sql_file.read()
@@ -292,7 +323,7 @@ def get_sofa_cns(con) -> pd.DataFrame:
     return sofa_cns.sort_values(by=['admissionid', 'time']).reset_index(drop=True)
 
 
-def get_sofa_renal_daily_urine_output(con) -> pd.DataFrame:
+def get_sofa_renal_daily_urine_output(con, legacy=False) -> pd.DataFrame:
     """
     Return SOFA Urine output score
 
@@ -301,7 +332,12 @@ def get_sofa_renal_daily_urine_output(con) -> pd.DataFrame:
     """
     # get urine output
     print('Querying SOFA Renal: urine output...')
-    filename = './sql/common/urine_output.sql'
+
+    if legacy:
+        filename = './sql/common/urine_output.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_sofa_renal_urine_output = sql_file.read()
@@ -336,10 +372,15 @@ def get_sofa_renal_daily_urine_output(con) -> pd.DataFrame:
     return sofa_renal_daily_urine_output.sort_values(by=['admissionid']).reset_index(drop=True)
 
 
-def get_sofa_renal_creatinine(con) -> pd.DataFrame:
+def get_sofa_renal_creatinine(con, legacy=False) -> pd.DataFrame:
     print('Querying SOFA Renal: creatinine...')
     # get serum creatinine
-    filename = './sql/common/creatinine_acute_kidney_injury_failure.sql'
+
+    if legacy:
+        filename = './sql/common/creatinine_acute_kidney_injury_failure.sql'
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     sql_filename = os.path.join(dirname, filename)
     with open(sql_filename, 'r') as sql_file:
         sql_creatinine = sql_file.read()
@@ -385,7 +426,7 @@ def get_sofa_renal_creatinine(con) -> pd.DataFrame:
     return sofa_renal_creatinine.sort_values(by=['admissionid']).reset_index(drop=True)
 
 
-def get_sofa_admission(con) -> pd.DataFrame:
+def get_sofa_admission(con, legacy=False) -> pd.DataFrame:
     """
     Returns a dataframe containing SOFA score in the first 24 hours of ICU admission for all patients.
     See the [SOFA](https://github.com/AmsterdamUMC/AmsterdamUMCdb/blob/master/concepts/severityscores/sofa.ipynb)
@@ -396,26 +437,32 @@ def get_sofa_admission(con) -> pd.DataFrame:
     """
     print('Starting SOFA at admission...')
 
+
     # loads the admissions table for stratification on admission unit
     print('Querying admissions...')
-    sql_admission = "SELECT * FROM admissions;"
+
+    if legacy:
+        sql_admission = "SELECT * FROM admissions;"
+    else:
+        raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
+
     admissions = read_sql(sql_admission, con)
 
     # SOFA Respiration: PaO2 / FiO2 (mmHg)
-    sofa_respiration = get_sofa_respiration(con)
+    sofa_respiration = get_sofa_respiration(con, legacy)
 
     # SOFA: Coagulation - Platelets (x10^3/mm^3)
-    sofa_platelets = get_sofa_platelets(con)
+    sofa_platelets = get_sofa_platelets(con, legacy)
 
     # SOFA: Liver - Bilirubin (µmol/l)
-    sofa_bilirubin = get_sofa_bilirubin(con)
+    sofa_bilirubin = get_sofa_bilirubin(con, legacy)
 
     # SOFA: Cardiovascular - Hypotension
     # cardiovascular medication: vasopressors and / or inotropes
-    sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con)
+    sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con, legacy)
 
     # Mean arterial pressure
-    sofa_cardiovascular_map = get_sofa_cardiovascular_map(con)
+    sofa_cardiovascular_map = get_sofa_cardiovascular_map(con, legacy)
 
     # combine the scores from MAP and cardiovascular medication
     sofa_cardiovascular = pd.concat([sofa_cardiovascular_map, sofa_cardiovascular_meds], sort=False).sort_values(
