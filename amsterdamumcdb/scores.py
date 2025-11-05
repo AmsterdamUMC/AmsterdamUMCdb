@@ -469,14 +469,14 @@ def get_sofa_admission(con, legacy=False) -> pd.DataFrame:
         by='admissionid')
 
     # SOFA: Central nervous system
-    sofa_cns = get_sofa_cns(con)
+    sofa_cns = get_sofa_cns(con, legacy)
 
     # SOFA: Renal - Creatinine or urine output
     # get urine output
-    sofa_renal_daily_urine_output = get_sofa_renal_daily_urine_output(con)
+    sofa_renal_daily_urine_output = get_sofa_renal_daily_urine_output(con, legacy)
 
     # serum creatinine
-    sofa_renal_creatinine = get_sofa_renal_creatinine(con)
+    sofa_renal_creatinine = get_sofa_renal_creatinine(con, legacy)
 
     # combine the scores from creatinine and urine output
     sofa_renal = pd.concat([sofa_renal_creatinine, sofa_renal_daily_urine_output], sort=False).sort_values(

@@ -130,7 +130,7 @@ def get_surgical_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         return combined_diagnoses[combined_diagnoses['surgical'] == 1]
     else:
         # gets the SQL source file
@@ -150,7 +150,7 @@ def get_medical_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         return combined_diagnoses[combined_diagnoses['surgical'] == 0]
     else:
         # gets the SQL source file
@@ -171,7 +171,7 @@ def get_cardiothoracic_surgery_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         return combined_diagnoses[
             (combined_diagnoses['surgical'] == 1)
             & (combined_diagnoses['diagnosis'].str.contains(re_cardiosurg, na=False, flags=re.IGNORECASE))]
@@ -195,7 +195,7 @@ def get_respiratory_failure_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         respfailure = combined_diagnoses[
             (
                     (combined_diagnoses['surgical'] == 1)
@@ -230,7 +230,7 @@ def get_neurosurgery_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         neurosurg = combined_diagnoses[
             (combined_diagnoses['surgical'] == 1)
             & (combined_diagnoses['diagnosis'].str.contains(re_neurosurg, na=False, flags=re.IGNORECASE))
@@ -255,7 +255,7 @@ def get_gastrointestinal_surgery_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         gisurg = combined_diagnoses[
             (combined_diagnoses['surgical'] == 1)
             & (combined_diagnoses['diagnosis'].str.contains(re_gisurg, na=False, flags=re.IGNORECASE))
@@ -280,7 +280,7 @@ def get_cardiac_arrest_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         cardiacarrest = combined_diagnoses[
             (
                     (combined_diagnoses['surgical'] == 1)
@@ -310,7 +310,7 @@ def get_vascular_surgery_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         vascsurg = combined_diagnoses[
             (combined_diagnoses['surgical'] == 1)
             & (combined_diagnoses['diagnosis'].str.contains(re_vascsurg, na=False, flags=re.IGNORECASE))
@@ -338,7 +338,7 @@ def get_trauma_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         trauma = combined_diagnoses[
             (
                     (combined_diagnoses['surgical'] == 1)
@@ -369,7 +369,7 @@ def get_neuro_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         neuro = combined_diagnoses[
             (combined_diagnoses['surgical'] == 0)
             & (combined_diagnoses['diagnosis'].str.contains(re_neuro, na=False, flags=re.IGNORECASE))
@@ -397,7 +397,7 @@ def get_cardio_patients(con, legacy=False) -> pd.DataFrame:
         con -- psycopg2 connection or pandas-gbq Google BigQuery config
     """
     if legacy:
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         cardio = combined_diagnoses[
             (combined_diagnoses['surgical'] == 0)
             & (combined_diagnoses['diagnosis'].str.contains(re_cardio, na=False, flags=re.IGNORECASE))
@@ -442,10 +442,10 @@ def get_sepsis_patients(con, legacy=False) -> pd.DataFrame:
     """
     if legacy:
         print('Creating cohort Sepsis-3 at admission (infection and SOFA score ≥2)...')
-        infection = get_infection_patients(con)
+        infection = get_infection_patients(con, legacy=True)
 
         print('Selecting patients based on SOFA total score SOFA ≥2')
-        sofa = get_sofa_admission(con)
+        sofa = get_sofa_admission(con, legacy=True)
         infection = pd.merge(infection, sofa[
             ['admissionid', 'sofa_respiration_score', 'sofa_coagulation_score',
              'sofa_liver_score', 'sofa_cardiovascular_score', 'sofa_cns_score',
@@ -466,7 +466,7 @@ def get_infection_patients(con, legacy=False) -> pd.DataFrame:
     """
     if legacy:
         print('Querying reason for admission...')
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
         print('Selecting patients with presumed infection...')
         infection = combined_diagnoses[
             (
@@ -521,10 +521,10 @@ def get_shock_patients(con, legacy=False) -> pd.DataFrame:
         print('Creating cohort shock at admission/first 24 hours (vasopressors/inotropes administered '
               'and lactate ≥2 mmol/l)...')
         print('Querying reason for admission...')
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
 
         # re-use SOFA cardiovascular score for vasopressors and/or inotropes
-        sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con)
+        sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con, legacy=True)
         lactate = query('common/lactate.sql', con)
 
         # max cardiovascular score based on vasopressors and inotropes
@@ -559,7 +559,7 @@ def get_invasive_ventilation_patients(con, legacy=False) -> pd.DataFrame:
     if legacy:
         print('Creating cohort invasive mechanical ventilation during ICU admission...')
         print('Querying reason for admission...')
-        combined_diagnoses = get_reason_for_admission(con)
+        combined_diagnoses = get_reason_for_admission(con, legacy=True)
 
         # use mechanical ventilation query
         print('Querying mechanical ventilation (including possible non-invasive ventilation)...')
