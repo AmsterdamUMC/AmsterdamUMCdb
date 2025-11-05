@@ -668,7 +668,7 @@ def show_chart(admissionid, con):
     flowsheet_reindexed_hourly = flowsheet_resampled_hourly.reset_index().set_index('time').groupby(
         ['category']).apply(
         reindex_by_date, index_start=index_start, index_end=index_end, interval=timedelta(hours=1),
-        method=None, fill_value=np.NaN)[['value', 'valueid']]
+        method=None, fill_value=np.nan)[['value', 'valueid']]
     flowsheet_reindexed_hourly.index.set_names('time', level=1, inplace=True)
 
     flowsheet_resampled = flowsheet_reindexed_hourly.sort_values(['valueid'], ascending=False).groupby(

@@ -525,7 +525,7 @@ def get_shock_patients(con, legacy=False) -> pd.DataFrame:
 
         # re-use SOFA cardiovascular score for vasopressors and/or inotropes
         sofa_cardiovascular_meds = get_sofa_cardiovascular_meds(con, legacy=True)
-        lactate = query('common/lactate.sql', con)
+        lactate = query('common/legacy/lactate.sql', con)
 
         # max cardiovascular score based on vasopressors and inotropes
         max_cardiovascular_score = sofa_cardiovascular_meds.groupby('admissionid')[
@@ -563,7 +563,7 @@ def get_invasive_ventilation_patients(con, legacy=False) -> pd.DataFrame:
 
         # use mechanical ventilation query
         print('Querying mechanical ventilation (including possible non-invasive ventilation)...')
-        ventilation = query('lifesupport/mechanical_ventilation.sql', con)
+        ventilation = query('lifesupport/legacy/mechanical_ventilation.sql', con)
 
         # merge dataframes
         ventilation = pd.merge(combined_diagnoses, ventilation, on='admissionid', how='left')

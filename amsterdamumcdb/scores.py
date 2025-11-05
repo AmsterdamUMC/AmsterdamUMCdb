@@ -32,17 +32,17 @@ def get_sofa_respiration(con, legacy=False) -> pd.DataFrame:
 
     print('Processing SOFA Respiration...')
     # remove extreme outliers
-    sofa_respiration.loc[(sofa_respiration['fio2'] > 100), 'fio2'] = np.NaN
+    sofa_respiration.loc[(sofa_respiration['fio2'] > 100), 'fio2'] = np.nan
 
     # convert FiO2 in % to fraction
     sofa_respiration.loc[(sofa_respiration['fio2'] <= 100) &
                          (sofa_respiration['fio2'] >= 20), 'fio2'] = sofa_respiration['fio2'] / 100
 
     # remove extreme outliers (FiO2) (possible O2 flow?)
-    sofa_respiration.loc[(sofa_respiration['fio2'] > 1), 'fio2'] = np.NaN
+    sofa_respiration.loc[(sofa_respiration['fio2'] > 1), 'fio2'] = np.nan
 
     # remove lower outliers, most likely incorrectly labeled as 'arterial' instead of '(mixed/central) venous'
-    sofa_respiration.loc[sofa_respiration['pao2'] < 50, 'pao2'] = np.NaN
+    sofa_respiration.loc[sofa_respiration['pao2'] < 50, 'pao2'] = np.nan
     sofa_respiration = sofa_respiration.dropna(subset=['pao2'])
 
     # calculate PF-ratio
@@ -197,7 +197,7 @@ def get_sofa_cardiovascular_map(con, legacy=False):
     print('Querying SOFA Cardiovascular: MAP...')
 
     if legacy:
-        filename = './sql/common/mean_abp.sql'
+        filename = './sql/common/legacy/mean_abp.sql'
     else:
         raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
@@ -208,8 +208,8 @@ def get_sofa_cardiovascular_map(con, legacy=False):
 
     print('Processing SOFA Cardiovascular: MAP...')
     # remove extreme outliers, most likely data entry errors or measurement errors
-    mean_abp.loc[(mean_abp['value'] > 165), 'value'] = np.NaN
-    mean_abp.loc[(mean_abp['value'] <= 30), 'value'] = np.NaN
+    mean_abp.loc[(mean_abp['value'] > 165), 'value'] = np.nan
+    mean_abp.loc[(mean_abp['value'] <= 30), 'value'] = np.nan
     mean_abp = mean_abp.dropna()
 
     # use mean_abp 'cleansed' dataframe
@@ -236,7 +236,7 @@ def get_sofa_cns(con, legacy=False) -> pd.DataFrame:
     print('Querying SOFA Central nervous system...')
 
     if legacy:
-        filename = './sql/common/gcs.sql'
+        filename = './sql/common/legacy/gcs.sql'
     else:
         raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
@@ -300,10 +300,10 @@ def get_sofa_cns(con, legacy=False) -> pd.DataFrame:
     sofa_cns.loc[(sofa_cns['eyes_score'] == 1) & (sofa_cns['motor_score'] == 1), 'verbal_score'] = 1
 
     # remove intubated scores including scores with E4M6V1 and perform back/forward fill
-    sofa_cns.loc[(sofa_cns['verbal_score'] == -2), 'verbal_score'] = np.NaN
-    sofa_cns.loc[(sofa_cns['verbal_score'] == 0), 'verbal_score'] = np.NaN
+    sofa_cns.loc[(sofa_cns['verbal_score'] == -2), 'verbal_score'] = np.nan
+    sofa_cns.loc[(sofa_cns['verbal_score'] == 0), 'verbal_score'] = np.nan
     sofa_cns.loc[(sofa_cns['eyes_score'] == 4) & (sofa_cns['motor_score'] == 6) & (sofa_cns['verbal_score'] == 1),
-                 'verbal_score'] = np.NaN
+                 'verbal_score'] = np.nan
 
     # assume for missing verbal scores that future measurements should contain the actual value, otherwise
     # forward fill for still missing values
@@ -334,7 +334,7 @@ def get_sofa_renal_daily_urine_output(con, legacy=False) -> pd.DataFrame:
     print('Querying SOFA Renal: urine output...')
 
     if legacy:
-        filename = './sql/common/urine_output.sql'
+        filename = './sql/common/legacy/urine_output.sql'
     else:
         raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
@@ -348,7 +348,7 @@ def get_sofa_renal_daily_urine_output(con, legacy=False) -> pd.DataFrame:
     sofa_renal_urine_output.loc[(sofa_renal_urine_output['value'] > 2500), 'value'] = sofa_renal_urine_output[
                                                                                           'value'] / 10
     # remove extreme outliers, most likely data entry error)
-    sofa_renal_urine_output.loc[(sofa_renal_urine_output['value'] > 4500), 'value'] = np.NaN
+    sofa_renal_urine_output.loc[(sofa_renal_urine_output['value'] > 4500), 'value'] = np.nan
     sofa_renal_urine_output = sofa_renal_urine_output.dropna()
 
     # get urine output per 24 hours
@@ -377,7 +377,7 @@ def get_sofa_renal_creatinine(con, legacy=False) -> pd.DataFrame:
     # get serum creatinine
 
     if legacy:
-        filename = './sql/common/creatinine_acute_kidney_injury_failure.sql'
+        filename = './sql/common/legacy/creatinine_acute_kidney_injury_failure.sql'
     else:
         raise NotImplementedError("Work in progress. Function not yet available for OMOP CDM version.")
 
@@ -388,7 +388,7 @@ def get_sofa_renal_creatinine(con, legacy=False) -> pd.DataFrame:
 
     print('Processing SOFA Renal: creatinine...')
     # remove extreme outliers, most likely data entry errors (manual_entry = True)
-    creatinine.loc[(creatinine['value'] < 30) & (creatinine['manual_entry'] is True), 'value'] = np.NaN
+    creatinine.loc[(creatinine['value'] < 30) & (creatinine['manual_entry'] is True), 'value'] = np.nan
     creatinine = creatinine.dropna(subset=['value'])
 
     # get highest creatinine per 24 hours
