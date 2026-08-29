@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asheville Summit on Reinforcement Learning in Healthcare · 3–5 September 2026</title>
+<meta name="description" content="An invitational summit convening leading scientists in reinforcement learning, causal inference, adaptive trial design and critical care to chart the path from offline to online RL in healthcare.">
+<!--
+  BEFORE PUBLISHING
+  1. Confirm with the steering committee that attendee names may be listed (section "Participants").
+     If not yet confirmed, delete the <ul> of names and keep only the institutions line.
+  2. After the summit, fill in the "Outcomes" section and remove the placeholder note.
+  3. Replace CONTACT_EMAIL below (or delete the contact line).
+  No venue, hotel, meal or private address details are included on purpose. Keep it that way.
+-->
+<style>
+  :root{
+    --ink:#1b2430; --ink2:#4a5666; --ink3:#7b8794; --rule:#e3e8ee; --bg:#fbfbfa; --panel:#ffffff;
+    --accent:#1f5f8b;
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:light}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:780px;margin:0 auto;padding:48px 22px 72px}
+  header{border-bottom:1px solid var(--rule);padding-bottom:28px;margin-bottom:36px}
+  .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 10px}
+  h1{font-size:34px;line-height:1.15;letter-spacing:-.015em;margin:0 0 14px;font-weight:700}
+  .meta{color:var(--ink2);font-size:16px;margin:0}
+  .meta span+span::before{content:"·";margin:0 .6em;color:var(--ink3)}
+  h2{font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin:40px 0 12px}
+  p{margin:0 0 14px}
+  ol.questions{padding-left:1.3em;margin:0}
+  ol.questions li{margin:0 0 10px;padding-left:.3em}
+  .people{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;padding:0;margin:0;list-style:none}
+  .people li{padding:6px 0;border-bottom:1px solid var(--rule);font-size:16px}
+  .people li small{display:block;color:var(--ink3);font-size:13.5px}
+  @media (max-width:560px){.people{grid-template-columns:1fr}}
+  .day{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:18px 22px;margin:0 0 14px}
+  .day h3{margin:0 0 4px;font-size:18px}
+  .day .theme{color:var(--ink2);margin:0 0 12px;font-style:italic}
+  .day ul{margin:0;padding-left:1.15em}
+  .day li{margin:0 0 6px}
+  .day li b{font-weight:600}
+  .note{border-left:3px solid var(--accent);padding:10px 16px;background:var(--panel);color:var(--ink2);border-radius:0 8px 8px 0}
+  footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--rule);color:var(--ink3);font-size:14px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="kicker">Invitational summit</p>
+  <h1>Asheville Summit on Reinforcement Learning in Healthcare</h1>
+  <p class="meta"><span>3–5 September 2026</span><span>Asheville, North Carolina, USA</span></p>
+</header>
+
+<p>The Summit brings together leading scientists in reinforcement learning (RL) from methodological, clinical and applied backgrounds. Its goal is to develop actionable solutions to improve the current state of RL in healthcare, and to chart the path from today's offline models to online reinforcement learning embedded in a learning health system.</p>
+
+<h2>Guiding questions</h2>
+<ol class="questions">
+  <li>What are the unifying semantics, terminology and methods in healthcare RL?</li>
+  <li>How can offline RL in healthcare deliver more than just another "machine-learned model", and what are the key shortcomings we need to solve in the next five years?</li>
+  <li>What is the primary barrier, or set of barriers, to achieving an "online" RL evaluation in healthcare, and what must happen to overcome them?</li>
+  <li>What is the most important next step to achieving the vision of embedded online RL in a learning healthcare system?</li>
+</ol>
+
+<h2>Steering committee</h2>
+<ul class="people">
+  <li>Derek C. Angus<small>University of Pittsburgh</small></li>
+  <li>Paul Elbers<small>Amsterdam UMC</small></li>
+  <li>Ari Ercole<small>University of Cambridge</small></li>
+  <li>Romain Pirracchio<small>University of California San Francisco</small></li>
+  <li>Christopher W. Seymour<small>University of Pittsburgh</small></li>
+</ul>
+
+<h2>Programme</h2>
+
+<div class="day">
+  <h3>Day 1 — Thursday 3 September</h3>
+  <p class="theme">Setting the stage for RL in healthcare</p>
+  <ul>
+    <li><b>Semantics, terminology and finding common ground.</b> A shared vocabulary for RL models in healthcare; defining "offline" and "online"; dynamic treatment regimes and optimal treatment strategies; causal versus RL framings; what "validation" means to each field.</li>
+    <li><b>All about offline RL for healthcare.</b> What constitutes a state; how to define an action, and whether the data should constrain it; determining rewards, now and in five years.</li>
+    <li><b>Future offline models.</b> Humans in the model-building loop; ensembles and layered RL for multiple actions; missing data beyond imputation; the optimal offline model in 2030.</li>
+  </ul>
+</div>
+
+<div class="day">
+  <h3>Day 2 — Friday 4 September</h3>
+  <p class="theme">Moving from offline to online RL</p>
+  <ul>
+    <li><b>Evaluating offline RL policies.</b> Validation and tuning for generalisability; near-causal interpretation of clinical impact; heterogeneity across units and systems; fairness; the role of silent-mode and prospective deployment.</li>
+    <li><b>Online RL and causality.</b> Defining online RL; multi-armed bandits as a bridge; how online RL resembles a Bayesian adaptive platform trial; whether uncertainty can inform allocation; sequential decisions and heterogeneity of treatment effect.</li>
+    <li><b>Imagining the ideal online RL system.</b> Design features of a first embedded system; how much learning can be embedded; blending the RCT with embedded RL, including micro-randomisation in specific subsets.</li>
+    <li><b>Reality check.</b> Data to learn, refine and federate; keeping patients safe while exploring; model updates and their regulation; assembling stakeholder groups; the most efficient path to deployment within two years.</li>
+  </ul>
+</div>
+
+<div class="day">
+  <h3>Day 3 — Saturday 5 September</h3>
+  <p class="theme">Concrete next steps this year, and by 2035</p>
+  <ul>
+    <li><b>Practical considerations for implementation.</b> Research, clinical care or quality improvement? Opening the conversation with ethics boards; prompt versus mandatory intervention; ideal regulatory oversight; whether early test cases should sit away from the bedside.</li>
+    <li><b>Synthesis and next steps.</b> Ground covered; written products (white paper, methods, priorities); funding opportunities; a name for the effort.</li>
+  </ul>
+</div>
+
+<h2>Participants</h2>
+<p>Twenty-five invited scientists spanning reinforcement learning, causal inference and targeted learning, Bayesian adaptive trial design, clinical informatics and critical care medicine, from Amsterdam UMC, Berry Consultants, University of Cambridge, University of California (Berkeley, San Diego, San Francisco), University of Chicago, University of Florida, Harvard University, Mayo Clinic, University of Pennsylvania, University of Pittsburgh, Stanford University, STRIVE Health and University of Washington.</p>
+<!-- Names: publish only after consent is confirmed. Delete this list if in doubt. -->
+<ul class="people">
+  <li>Scott Berry<small>Berry Consultants</small></li>
+  <li>Anirban Bhattacharyya<small>Mayo Clinic</small></li>
+  <li>Azra Bihorac<small>University of Florida</small></li>
+  <li>Marco Carone<small>University of Washington</small></li>
+  <li>Issa Dahabreh<small>Harvard University</small></li>
+  <li>Paul Hilders<small>Amsterdam UMC</small></li>
+  <li>Christopher Horvat<small>University of Pittsburgh</small></li>
+  <li>Matthieu Komorowski<small>STRIVE Health</small></li>
+  <li>Preethi Krishnan<small>Mayo Clinic</small></li>
+  <li>Roger Lewis<small>Berry Consultants</small></li>
+  <li>Xuefeng Liu<small>University of Florida</small></li>
+  <li>Shamim Nemati<small>University of California San Diego</small></li>
+  <li>William Parker<small>University of Chicago</small></li>
+  <li>Maya Petersen<small>University of California Berkeley</small></li>
+  <li>Nigam Shah<small>Stanford University</small></li>
+  <li>Victor Talisa<small>University of Pittsburgh</small></li>
+  <li>Mark van der Laan<small>University of California Berkeley</small></li>
+  <li>Kert Viele<small>Berry Consultants</small></li>
+  <li>Andre Waschka<small>University of California Berkeley</small></li>
+  <li>Gary Weissman<small>University of Pennsylvania</small></li>
+  <li>Brian Woolley<small>University of Pittsburgh</small></li>
+</ul>
+
+<h2>Outcomes</h2>
+<!-- After the summit: replace this note with the agreed outputs (white paper, priorities, next meeting). -->
+<div class="note">Outcomes and written products from the Summit will be posted here following the meeting.</div>
+
+<footer>
+  Convened by the steering committee. Enquiries: CONTACT_EMAIL
+</footer>
+
+</div>
+</body>
+</html>
